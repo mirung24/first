@@ -1,0 +1,17 @@
+.cb > span {background-color: #60b3f7; border-radius: 5px; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+.rb > span {background-color: #ff9587; border-radius: 5px; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+.tb > span {background-color: #c0c0c0; border-radius: 5px; color: #fff; padding: 0rem 0.15rem; margin-right: 0.2rem; /* font-size: 0.3rem; */ line-height: 2;}
+
+.tb-wrap .tb:nth-child(1) > span, td .tb:nth-child(1) > span {background-color: #82cde4;}
+.tb-wrap .tb:nth-child(2) > span, td .tb:nth-child(2) > span {background-color: #ffda74;}
+.tb-wrap .tb:nth-child(3) > span, td .tb:nth-child(3) > span {background-color: #fcb099;}
+.tb-wrap .tb:nth-child(4) > span, td .tb:nth-child(4) > span {background-color: #79d6af;}
+
+/* table */
+.table tbody td, .table th {padding: 0.2rem 0.5rem !important;}
+.table tbody tr td:not(:last-child) {border-right: 1px solid #eee;}
+.box .table tbody tr td:nth-child(1) {font-weight: bold;}
+.table tbody td:hover {background-color: #e3e9f0; cursor: pointer;}
+.table thead th {position: sticky !important; top: 0; z-index: 900;}
+.box .table {font-size: 0.8rem;}
+.box .table-responsive .table tbody td.active {background-color: #e3f1fc;}

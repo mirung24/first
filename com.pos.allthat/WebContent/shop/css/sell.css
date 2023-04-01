@@ -1,0 +1,103 @@
+.redClass {color: red;}
+
+/* square-wrap */
+.square-wrap {flex: 33.3333%; margin: 1rem 0; padding: 0 1rem; position: relative;}
+.square-wrap:not(:last-child) {border-right: 2px dashed #ddd;}
+.circle {width: 20px; height: 20px; background-color: #f3f3f9; border-radius: 50%; position: absolute; right: -0.7rem;}
+.icon-wrap {width: 3rem; height: 3rem; display: table;  border-radius: 50%;}
+.icon-wrap i {font-size: 1.2rem; display: table-cell; text-align: center; vertical-align: middle;}
+.icon-wrap span{font-size: 1rem; display: table-cell; text-align: center; vertical-align: middle; font-weight: bold;}
+.square-title {font-family: 'Happiness-Sans-Bold'; color: #6c757d; font-weight: bold; font-size: 0.9rem;}
+.square-price {font-family: 'Cafe24Ssurround'; color: #344256; font-size: 1.27rem; font-weight: bold;}
+.square-total {color: #8c8c8c; font-size: 0.9rem;}
+.square-line {width: 1px; height: 30px; background-color: #e6e6e6; margin: 0 0.5rem;}
+.square-line2 {width: 1px; height: 35px; background-color: #e6e6e6; margin: 0 0.5rem;}
+.square-wrap:nth-child(1) .icon-wrap {background-color: #fce9e9;}
+.square-wrap:nth-child(1) i {color: #e52727;}
+.square-wrap:nth-child(1) span {color: #e52727;}
+.square-wrap:nth-child(1) .square-price span {color: #e52727;}
+.square-wrap:nth-child(2) .icon-wrap {background-color: #fdecce;}
+.square-wrap:nth-child(2) i {color: #f59e0c;}
+.square-wrap:nth-child(2) span {color: #f59e0c;}
+.square-wrap:nth-child(2) .square-price span {color: #f59e0c;}
+.square-wrap:nth-child(3) .icon-wrap {background-color: #d2d9ef;}
+.square-wrap:nth-child(3) i {color: #1f41af;}
+.square-wrap:nth-child(3) span {color: #1f41af;}
+.square-wrap:nth-child(3) .square-price span {color: #1f41af;}
+.circle-top {top: -1.5rem; border-bottom: 3px solid #eee;}
+.circle-bottom {bottom: -1.5rem; border-top: 3px solid #eee;}
+
+/*.total-wrap */
+.total-wrap {border: 1px solid #cad3db; flex-wrap: wrap; background-color: #e9f1f7; padding: 0.4rem; font-size: 0.85rem;}
+.total-list {flex: 32%; padding: 0 1%; margin: 0.1rem 0;}
+.total-list > li > i {color: #ea6572;}
+.total-list > li > span {color: #808080;}
+.total-list > li > .number {font-weight: bold; color: #354781;}
+
+/*.table text-align */
+.box #table tr th:nth-child(8), .box #table tr td:nth-child(8) {text-align: right !important;}
+.box #table tr th:nth-child(9), .box #table tr td:nth-child(9) {text-align: right !important;}
+.box #table tr th:nth-child(10), .box #table tr td:nth-child(10) {text-align: right !important;}
+.box .table tr th:nth-child(11), .box .table tr td:nth-child(11) {text-align: right !important;}
+.box .table tr th:nth-child(12), .box .table tr td:nth-child(12) {text-align: right !important;} 
+.box #table tr td:nth-child(13) {text-align: left !important;}
+.box #table tr th:nth-child(15), .box #table tr td:nth-child(15) {display: none;}
+
+.box #table2 tr td:nth-child(3) {text-align: left !important; padding-left: 30px !important;}
+.box #table2 tr th:nth-child(4), .box #table2 tr td:nth-child(4) {text-align: left !important;}
+.box #table2 tr th:nth-child(9), .box #table2 tr td:nth-child(9) {text-align: center !important;}
+.box #table2 tr th:nth-child(11), .box #table2 tr td:nth-child(11) {text-align: right !important;}
+.box #table2 tr th:nth-child(12), .box #table2 tr td:nth-child(12) {text-align: right !important;}
+.box #table2 tr th:nth-child(13), .box #table2 tr td:nth-child(13) {text-align: center !important;}
+
+.table-responsive { overflow: visible !important; }/* scss 때문에 scroll 생기는 현상 제거 */
+
+/* search */
+.sel-name {font-weight: bold; color: #495057;}
+.inp-cbx + .cbx {background-color: #f3f3f9;}
+.inp-cbx:checked + .cbx {background-color: #f3f3f9;}
+
+/* hover */
+.productname {position: relative;}
+.productname-hover {width: 25rem; position: absolute; top: -12px; left: -7px; border-radius: 3px; opacity: 0; transition: all 0.5s; visibility: hidden; font-size: 0.85rem; color: #fff; font-weight: normal;}
+.productname-line {background-color: rgba(0, 0, 0, 0.5); border-radius: 3px; padding: 0.2rem 0.4rem;}
+.productname:hover .productname-hover {top: -26px; opacity: 1; visibility: visible;  z-index: 900;}
+.tri{position: absolute; top: 22px; left: 15px; width: 0px; height: 0px; border-bottom: 8px solid none; border-top: 8px solid rgba(0, 0, 0, 0.5); border-right: 6px solid transparent; border-left: 6px solid  transparent;}
+
+
+/* 반응형 */
+@media screen and (max-width: 1750px) {
+	.table-media {min-width:1500px;}
+}
+
+#loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    z-index: 1002;
+    text-align: center;
+}
+#loading > #loading_bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1003;
+    transform : translate(-50%, -50%);
+}
+
+/* date-tabs */
+.date-tabs {overflow: hidden; background-color: #999fa8; display: flex; border-radius: 4px; height: 2rem; font-family: 'MinSans-Regular'; margin-left: 8px;}
+.date-tabs button {background-color: inherit; border: none; outline: none; cursor: pointer; width: 3rem; transition: all 0.3s; font-size: 0.83rem; color: #fff; background-color: #999fa8; margin: 0; padding: 0;}
+.date-tabs button:hover {background-color: #82878f;}
+.date-tabs button.active {background-color: #777c85;}
+
+/* hover */
+.productname2 {position: relative;}
+.productname-hover2 {width: 25rem; position: absolute; top: -18px; right: 0; border-radius: 3px; opacity: 0; transition: all 0.2s; visibility: hidden; font-size: 0.85rem; color: #ffffff; font-weight: normal;}
+.productname-line2 {background-color: #354781; box-shadow: 1px 1px 2px 2px rgba(234, 235, 240, 0.557); border-radius: 3px; padding: 0.2rem 0.4rem; color: #fff;}
+.productname2:hover .productname-hover2 {top: -30px; opacity: 1; visibility: visible;  z-index: 900;}
+.tri2 {position: absolute; top: 22px; right: 1.2rem; width: 0px; height: 0px; border-bottom: 8px solid none; border-top: 8px solid #354781; border-right: 6px solid transparent; border-left: 6px solid  transparent;}

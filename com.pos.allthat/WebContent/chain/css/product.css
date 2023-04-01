@@ -1,0 +1,108 @@
+/* square-wrap */
+.square-wrap {flex: 33.3333%; margin: 1rem 0; padding: 0 2rem; position: relative;}
+.square-wrap:not(:last-child) {border-right: 2px dashed #ddd;}
+.circle {width: 20px; height: 20px; background-color: #f3f3f9; border-radius: 50%; position: absolute; right: -0.7rem;}
+.icon-wrap {width: 3rem; height: 3rem; display: table;  border-radius: 50%;}
+.icon-wrap i {font-size: 1.2rem; display: table-cell; text-align: center; vertical-align: middle;}
+.square-title {font-family: 'Happiness-Sans-Bold'; color: #6c757d; font-size: 1rem; font-weight: bold; margin-top: 0.8rem; margin-bottom: 0.2rem;}
+.square-price {font-family: 'Cafe24Ssurround'; color: #344256; font-size: 1.3rem; font-weight: bold;}
+.square-price span {margin-left: 0.2rem;}
+.square-total {color: #8c8c8c; font-size: 1rem;}
+.square-wrap:nth-child(1) .icon-wrap {background-color: #fce9e9;}
+.square-wrap:nth-child(1) i {color: #e52727;}
+.square-wrap:nth-child(1) .square-price span {color: #e52727;}
+.square-wrap:nth-child(2) .icon-wrap {background-color: #fdecce;}
+.square-wrap:nth-child(2) i {color: #f59e0c;}
+.square-wrap:nth-child(2) .square-price span {color: #f59e0c;}
+.square-wrap:nth-child(3) .icon-wrap {background-color: #d2d9ef;}
+.square-wrap:nth-child(3) i {color: #1f41af;}
+.square-wrap:nth-child(3) .square-price span {color: #1f41af;}
+.circle-top {top: -1.5rem; border-bottom: 3px solid #eee;}
+.circle-bottom {bottom: -1.5rem; border-top: 3px solid #eee;}
+
+/*.table text-align */
+.box .table tr th:nth-child(2), .box .table tr td:nth-child(2) {text-align: left !important;}
+.box .table tr th:nth-child(4), .box .table tr td:nth-child(4) {text-align: left !important;}
+/* .box .table tr th:nth-child(7), .box .table tr td:nth-child(7) {text-align: right !important;} */
+/* .box .table tr th:nth-child(8), .box .table tr td:nth-child(8) {text-align: right !important;} */
+/* .box .table tr th:nth-child(9), .box .table tr td:nth-child(9) {text-align: right !important;} */
+.box .table tr th:nth-child(7), .box .table tr td:nth-child(7) {text-align: right !important;}
+.box .table tr th:nth-child(8), .box .table tr td:nth-child(8) {text-align: right !important;}
+.box .table tr th:nth-child(9), .box .table tr td:nth-child(9) {text-align: right !important;}
+.box .table tr th:nth-child(10), .box .table tr td:nth-child(10) {text-align: right !important;}
+/* .box .table tr th:nth-child(14), .box .table tr td:nth-child(14) {text-align: right !important;} */
+.box .table tr th:nth-child(12), .box .table tr td:nth-child(12) {display: none;}
+
+/* modal */
+.pop-total .pop-list span {min-width: 7.5rem;}
+.pop-total {display: flex; flex-wrap: wrap; width: 35rem;}
+.pop-total li {flex: 50%;}
+.pop-total li input {text-align: right;}
+.pop1 .t1 {width: 35rem; height: 9.3rem; overflow-y: auto;}
+.pop1 .t1 th {padding-left: 0.2rem; padding-right: 0.2rem;}
+.pop1 .t1 td {padding: 0.3rem 0.3rem !important;}
+.pop1 .t1 td:nth-child(1) input {width: 7.5rem;}
+.pop1 .t1 td:nth-child(2) input {width: 7.5rem;}
+.pop1 .t1 td:nth-child(3) input {width: 8rem;}
+.pop1 .t1 td:nth-child(4) input {width: 8rem;}
+.pop1 .t1 td:nth-child(5) input {width: 3rem;}
+.pop1 .t1 td:nth-child(6) input {width: 3rem;}
+.pop1 .t1 td:nth-child(7) input {width: 4.2rem;}
+.pop1 .t1 td:nth-child(8) input {width: 3rem;}
+.pop1 .t1 .table tr th:nth-child(9), .pop1 .t1 .table tr td:nth-child(9) { display: none;}
+.pop1 .t2 {height: 12.6rem; overflow-y: auto;}
+.pop1 .t2 .table tr th:nth-child(2), .pop1 .t2 .table tr td:nth-child(2) {text-align: right !important;}
+
+.fixedHeader{position:sticky; top:0;}
+#catesv {background-color: grey;}
+
+/* hover */
+.productname {position: relative;}
+.productname-hover {width: 25rem; position: absolute; top: -12px; left: -7px; border-radius: 3px; opacity: 0; transition: all 0.5s; visibility: hidden; font-size: 0.85rem; color: #fff; font-weight: normal;}
+.productname-line {background-color: rgba(0, 0, 0, 0.5); border-radius: 3px; padding: 0.2rem 0.4rem;}
+.productname:hover .productname-hover {top: -26px; opacity: 1; visibility: visible;  z-index: 900;}
+.tri{position: absolute; top: 22px; left: 15px; width: 0px; height: 0px; border-bottom: 8px solid none; border-top: 8px solid rgba(0, 0, 0, 0.5); border-right: 6px solid transparent; border-left: 6px solid  transparent;}
+
+/* 반응형 */
+@media screen and (max-width: 1750px) {
+	.table-media {min-width:1500px;}
+}
+
+#loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    z-index: 1002;
+    text-align: center;
+}
+#loading > #loading_bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1003;
+    transform : translate(-50%, -50%);
+}
+
+.modal-wrap4 {width: 100%; height: 100vh; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; z-index: 1000; transition: all 0.3s; font-size: 0.85rem;}
+.pop4 {width: 700px; background-color: #f1f5f9; padding: 1rem; border-radius: 10px;}
+.pop4 .selcate {font-size: 1rem;}
+.pop4 .selcate span {color: #61a8ff; font-weight: bold;}
+.pop4 .notice {color: #fa5858; font-size: 0.8rem;}
+.pop4 .fa-bars-staggered {font-size: 0.65rem !important;}
+.pop4 .btn-change {background-color: #f0f0f5; color: #607cd6; padding: 0.3rem 0.5rem; font-size: 0.7rem; height: 28px; font-weight: bold;}
+.pop4 .btn-change:hover {color: #fff; background-color: #f0f0f5; color: #607cd6;}
+.pop4 .table-responsive {flex: 33.3333%; border: 1px solid #eee; height: 29rem; overflow: auto;}
+.pop4 .table {font-weight: bold;}
+.pop4 .table tbody tr td {display: block;}
+.pop4 .table tbody th, .pop4 .table tbody td {padding: 0.4rem 1rem !important; height: 51px;}
+.pop4 .table thead th {position: sticky !important; top: 0; z-index: 900;}
+.pop4 .table tbody td {border-bottom: none;}
+.pop4 .table tbody tr td i {font-size: 1rem; display: none;}
+.pop4 .table tbody td ul {
+   display: flex; justify-content: space-between; align-items: center;}
+.pop4 .table tbody td ul p {font-size: 0.7rem; color: #b1b1b1; font-weight: normal;}
+/* .pop4 .table2 tbody tr, .pop4 .table3 tbody tr {visibility: hidden;} */

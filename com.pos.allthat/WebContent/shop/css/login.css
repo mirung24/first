@@ -1,0 +1,42 @@
+/* font */
+@font-face {
+	font-family: 'NanumSquareRound';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+html body {font-size: 1rem; font-family: 'NanumSquareRound';}
+
+.wrapper {display: flex; justify-content: center; align-items: center; height: 100vh;}
+
+/* login-body */
+.login-wrap {width: 430px;}
+.logo img {width: 200px;}
+.login-body {margin-top: 3rem;}
+.form-wrap {margin-top: 1.6rem; color: #adadad; }
+.input-group {position:relative; height: 47px; font-size: 0.9rem; color: #000; margin-right: 2rem;}
+.input-group  input { box-sizing: border-box; width: 100%; height: 100%; outline: none; border: 1px solid #ddd; background-color: #f4f4f4; border-radius: 4px; padding: 0 0.5rem;}
+.input-group  label {position:absolute; left: 0%; bottom: 0; width:100%; height:100%; text-align:left; pointer-events:none;}
+.input-group  label span {position:absolute; left: 0.5rem; bottom: 4px; transition:all 0.3s; color: #adadad;}
+.input-group  input:focus + label span, .input-group  input:valid + label span {transform:translateY(-180%); font-size: 0.85rem; font-weight: bold; color:#354781;}
+
+/* footer */
+.footer {padding: 0 2rem;}
+.custom-control {margin-top: 1rem;}
+.find {color: #666666; margin-top: 1.5rem;}
+.idfind, .pwfind {cursor: pointer; color: #808080;}
+.idfind:hover, .pwfind:hover  {color: #696969;}
+.line3 {color: #ccc; margin: 0 0.5rem;}
+
+/* button */
+.btn-login {border: 3px solid #354781; background-color: #354781; color: #fff; border-radius: 8px; padding: 0.3rem 1.5rem; width: 100%; padding: 0.9rem ; font-size: 1rem; margin-top: 1rem; box-shadow: 0px 3px 8px 3px rgba(128, 132, 173, 0.557);}
+.btn-login:hover {background-color: #394a80; color: #fff;}
+
+/* checkbox */
+.custom-control-label {padding-top: 0.15rem;}
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {background-color: #354781; border: none;}
+.custom-control-label::before {background-color:#eeeeee;}
+.custom-control {padding-left: 1.5rem;}
+
+.errorbox {color: red;}

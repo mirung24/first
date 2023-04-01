@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>로그인</title>
+	<link rel="stylesheet" type="text/css"
+		href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/base.css">
+	<link rel="stylesheet" href="../css/login.css">
+	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+	<script src="../js/jquery-3.5.1.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="login-wrap">
+			<div class="logo text-center"><a href="#"><img src="../img/logo2.png" alt="로고" class="img"></a>
+			</div>
+			<div class="login-body">
+				<div class="form-wrap d-flex justify-content-between align-items-center">
+					<i class="material-icons mr-2">face</i>
+					<div class="input-group">
+						<input type="text" id="user_name" autofocus autocomplete="" required>
+						<label for="user_name"><span>아이디<span></span></span></label><span class="errorbox"></span>
+					</div>
+				</div><!-- form-wrap -->
+				<div class="form-wrap d-flex justify-content-between align-items-center">
+					<i class="material-icons mr-2">lock_outline</i>
+					<div class="input-group">
+						<input type="password" id="user_password" autocomplete="" required>
+						<label for="user_password"><span>비밀번호</span></label><span class="errorbox"></span>
+					</div>
+				</div><!-- form-wrap -->
+			</div><!-- login-body -->
+			<div class="footer text-center">
+				<div class="custom-control custom-checkbox text-left d-flex align-items-center">
+					<div>
+						<input id="magicBtn1" type="checkbox" class="custom-control-input">
+						<label class="custom-control-label" for="magicBtn1">로그인 상태 유지</label>
+					</div>
+					<div class="ml-5">
+						<input id="magicBtn2" type="checkbox" class="custom-control-input">
+						<label class="custom-control-label" for="magicBtn2">아이디 저장</label>
+					</div>
+				</div><!-- custom-control -->
+				<a href="./main.html"><button class="btn btn-login">로그인</button></a>
+
+				<div class="find text-center">
+					<span class="idfind">아이디 찾기</span><span class="line3"> l </span><span class="pwfind">비밀번호 찾기</span>
+				</div><!-- find -->
+			</div><!-- footer -->
+		</div><!-- login-wrap -->
+	</div><!-- wrapper -->
+	<script src="../js/login.js"></script>
+</body>
+</html>

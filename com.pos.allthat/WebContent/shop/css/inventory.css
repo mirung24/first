@@ -1,0 +1,41 @@
+.box-wrap > div:nth-child(1) {flex: 50% 0 0;}
+.box-wrap > div:nth-child(2) {flex: 50% 0 1; display: none;}
+.table input {padding-top: 0; padding-bottom: 0; height: 1.5rem !important;}
+
+/*.table text-align */
+.box #table tr th:nth-child(3), .box .table tr td:nth-child(3) {text-align: left !important;}
+.box #table tr th:nth-child(4), .box .table tr td:nth-child(4) {text-align: left !important;}
+/* .box #table tr th:nth-child(7) {width: 2.3rem !important;}
+.box #table tr th:nth-child(8) {width: 2.3rem !important;} */
+/* .box.tab-wrap > div:nth-child(1) .table tr th:nth-child(3), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(3) {text-align: left !important;} */
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(4), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(4) {text-align: center !important;}
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(6), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(6) {text-align: right !important;}
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(7), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(7) {text-align: right !important;}
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(8), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(8) {text-align: right !important;}
+
+/* hover */
+.productname {position: relative;}
+.productname-hover {width: 25rem; position: absolute; top: -12px; left: -7px; border-radius: 3px; opacity: 0; transition: all 0.5s; visibility: hidden; font-size: 0.85rem; color: #fff; font-weight: normal;}
+.productname-line {background-color: rgba(0, 0, 0, 0.5); border-radius: 3px; padding: 0.2rem 0.4rem;}
+.productname:hover .productname-hover {top: -26px; opacity: 1; visibility: visible;  z-index: 900;}
+.tri{position: absolute; top: 22px; left: 15px; width: 0px; height: 0px; border-bottom: 8px solid none; border-top: 8px solid rgba(0, 0, 0, 0.5); border-right: 6px solid transparent; border-left: 6px solid  transparent;}
+
+
+#loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    z-index: 1002;
+    text-align: center;
+}
+#loading > #loading_bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1003;
+    transform : translate(-50%, -50%);
+}

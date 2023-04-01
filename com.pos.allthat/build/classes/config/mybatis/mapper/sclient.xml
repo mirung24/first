@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sclient">
+	
+	<!-- 거래처관리 리스트 조회 -->
+	<select id="sclient_list" parameterType="vo.shopvo.AccountVO" resultType="vo.shopvo.AccountVO">
+		select dat.*
+		from(
+			select replace(format(@rownum := @rownum+1,0),',','') as no, pa.*
+			from(
+				select 
+				accountcd,
+				corporatenumber,
+				accountname,
+				concat(address, ' ', address2) as addr,
+				president,
+				presidentcnt,
+				tel,
+				hp,
+				fax,
+				email,
+				taxuseremail,
+				manager,
+				regdt
+				from pos_account
+				where compcd=#{compcd}
+					<if test="search1 == 'all'">
+						and concat(accountname, corporatenumber, president) like concat('%', #{searchInput}, '%')
+					</if>
+					<if test="search1 == 'accountname'">
+						and accountname like concat('%', #{searchInput}, '%')
+					</if>
+					<if test="search1 == 'corporatenumber'">
+						and corporatenumber like concat('%', #{searchInput}, '%')
+					</if>
+					<if test="search1 == 'president'">
+						and president like concat('%', #{searchInput}, '%')
+					</if>
+					<if test="search2 == 'regdt'">
+						and date_format(regdt,'%Y%m%d') between #{searchDate1} and #{searchDate2}
+					</if>
+				order by regdt asc
+			)pa, (select @rownum :=0) r
+		)dat
+	</select>
+	
+	<!-- tr클릭 상세보기 -->
+	<select id="cli_sel" parameterType="String" resultType="vo.shopvo.AccountVO">
+		select 
+			accountcd ,
+			corporatenumber ,
+			accountname ,
+			address ,
+			address2 ,
+			president ,
+			presidentcnt ,
+			tel ,
+			hp ,
+			fax ,
+			email ,
+			taxuseremail ,
+			manager,
+			remarks,
+			business,
+			sectors
+		from pos_account pa where accountcd =#{accountcd}
+	</select>
+	
+	<!-- 거래처 등록 -->
+	<insert id="sclient_regi" parameterType="vo.shopvo.AccountVO">
+		insert into pos_account(
+			accountcd,
+			corporatenumber,
+			accountname,
+			address,
+			address2,
+			president,
+			presidentcnt,
+			tel,
+			hp,
+			fax,
+			email,
+			taxuseremail,
+			manager,
+			remarks,
+			regcd,
+			regdt,
+			compcd,
+			business,
+			sectors
+		)
+		values(
+			fn_getuuid('ACC'),
+			#{corporatenumber},
+			#{accountname},
+			#{address},
+			#{address2},
+			#{president},
+			#{presidentcnt},
+			#{tel},
+			#{hp},
+			#{fax},
+			#{email},
+			#{taxuseremail},
+			#{manager},
+			#{remarks},
+			#{regcd},
+			now(),
+			#{compcd},
+			#{business},
+			#{sectors}
+		)
+	</insert>
+	
+	<!-- 상세보기 수정 -->
+	<update id="sclient_edit" parameterType="vo.shopvo.AccountVO">
+		update pos_account set
+			accountname=#{accountname},
+			address=#{address},
+			address2=#{address2},
+			president=#{president},
+			presidentcnt=#{presidentcnt},
+			tel=#{tel},
+			hp=#{hp},
+			fax=#{fax},
+			email=#{email},
+			taxuseremail=#{taxuseremail},
+			manager=#{manager},
+			remarks=#{remarks},
+			upddt=now(),
+			business=#{business},
+			sectors=#{sectors}
+		where accountcd = #{accountcd}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

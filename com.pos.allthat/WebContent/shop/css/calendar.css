@@ -1,0 +1,63 @@
+.mb > span {background-color: #60b3f7; border-radius: 14%; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+.cb > span {background-color: #ffda74; border-radius: 14%; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+.rb > span {background-color: #ff9587; border-radius: 14%; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+.ub > span {background-color: #9bd8aa; border-radius: 14%; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+.tb > span {background-color: #ffba7a; border-radius: 14%; color: #fff; padding: 0.2rem 0.4rem; font-size: 0.7rem;}
+
+/* 캘린더 */
+.monthsel {font-size: 1.4rem;font-weight: bold;}
+#calendar {border: 4px dashed #ddd; border-radius: 8px;}
+.calendar_table.TableStyle {width: 100%; background-color: #ffffff;}
+.calender_tdStyle:hover {background-color: #eef2f7; cursor: pointer;}
+#calendar .TableStyle th, #calendar .TableStyle td {border: 1px solid #ccc; text-align: center; width: 14.285%; padding: 0.3rem;}
+#calendar .TableStyle td.selected { border: 2px solid #0377FA !important; background-color: #D9E9FA; }
+#calendar .TableStyle tr th {border-top: none;}
+#calendar .TableStyle tr th:nth-child(1) {border-left: none;}
+#calendar .TableStyle tr th:nth-child(7) {border-right: none;}
+#calendar .TableStyle td:nth-child(1) {border-left: 2px none;}
+#calendar .TableStyle td:nth-child(7) {border-right: 2px none;}
+#calendar .TableStyle tr:last-child td {border-bottom: 2px none;}
+.day_date {text-align: right; padding-bottom: 0.5rem;}
+.div_right {display: flex; justify-content: space-between; align-items: center;}
+.sat_date {color:#0000ff;}
+.sun_date {color:#ff0000;}
+.sum_mb {color: #777777; background-color: #d5f1fa; padding: 0.05rem 0.3rem; border-radius: 3px; margin-top: 0.3rem;}
+.sum_approve {color: #777777; background-color: #FBEFC9; padding: 0.05rem 0.3rem; border-radius: 3px; margin-top: 0.3rem;}
+.sum_cancel {color: #777777; background-color: #f8e4ef; padding: 0.05rem 0.3rem; border-radius: 3px; margin-top: 0.3rem;}
+.sum_total {color: #777777; background-color: #e7ffed; padding: 0.05rem 0.3rem; border-radius: 3px; margin-top: 0.3rem;}
+.sum_pharmacy {color: #777777; background-color: #ffe9dd; padding: 0.05rem 0.3rem; border-radius: 3px; margin-top: 0.3rem;}
+
+/* 월달력 */
+.ui-datepicker {margin-top: 0.3rem;}
+.ui-datepicker table {margin: 0.5rem 0 !important;}
+.mtz-monthpicker {padding: 0.5rem 0 !important;}
+.mtz-monthpicker-year {border: none !important; outline:  none !important; font-size: 1.1rem !important; font-weight: bold; cursor: pointer;}
+.ui-widget-content {border: none !important; border-radius: 6px !important; box-shadow: 3px 5px 10px rgba(138, 138, 138, 0.3); padding: 0 0.5rem 0.5rem 0.5rem !important;}
+.ui-widget-header {background-color: #fff !important; border: none !important; border-bottom: 1px solid #eee !important; font-family: 'NanumSquareRound' !important; border-radius: 0 !important;}
+.ui-state-default {background-color: #fff !important; border: none !important; cursor: pointer !important; font-family: 'NanumSquareRound' !important; color: #333 !important; font-size: 0.95rem !important;}
+.ui-state-default:hover {background-color: #ececec !important; border-radius: 7px;}
+.ui-state-default.ui-state-active {background-color: #5f78eb !important; box-shadow: 1px 2px 3px rgba(115, 136, 228, 0.432); color: #fff !important; border-radius: 7px;}
+
+/* table */
+.table tbody td, .table th {padding: 0.2rem 0.5rem !important;}
+.table tbody tr td:not(:last-child) {border-right: 1px solid #eee;}
+.table thead th {position: sticky !important; top: 0; z-index: 900;}
+
+#loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    z-index: 1002;
+    text-align: center;
+}
+#loading > #loading_bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1003;
+    transform : translate(-50%, -50%);
+}

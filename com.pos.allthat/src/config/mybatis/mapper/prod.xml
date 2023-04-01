@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="prod">
+	
+	<!-- 상품관리 리스트 조회 -->
+   <select id="prod_list" parameterType="vo.newvo.ProdListVO" resultType="vo.newvo.ProdListVO">
+		SELECT dd.*
+		  from(
+		      select FLOOR((@rownum + 1 - 1)/ #{pagecnt} + 1) page,replace(FORMAT(@rownum := @rownum + 1,0),',','') as no,list.*
+		     from(
+		        SELECT productname ,productid, productcd,maker ,spec ,unit, size,categoryname,
+		                 mxprice,
+		                 miprice,
+		                 maprice,
+		                 total,
+		                 total2,
+		                 total3,
+		                 case when total3=0 then '-' else 
+		                 case when @pv = ifnull(total3,0) then @vrank
+		                             when @pv := ifnull(total3,0) then @vrank := @vrank+1
+		                             end
+		                 end as ranking
+		        from(
+		           select pc.productname ,
+		                 pc.productid ,
+		                 pc.productcd ,
+		                 pc.maker ,
+		                 pc.spec ,
+		                 pc.unit ,
+		                 pc.`size`,
+		                 pc2.categoryname,
+		                 mm2.mxprice,
+		                 mm2.miprice,
+		                 mm2.maprice,
+		                 ifnull(total,0) as total,
+		                 ifnull(total2,0) as total2,
+		                 ifnull(total3,0) as total3
+		           from pos_chainproduct pc
+		               left outer join pos_category3 pc2 on pc.category3cd = pc2.category3cd 
+		               left outer join 
+		               (
+		                    SELECT productid,sum(total) as total,sum(total2) as total2,sum(total3) as total3
+		                        from(
+		                              select pc.productid,pc.productcd,pc.packingunit,
+		                              sum(case when pp.paygubn='ACC' and pp.auth_date = date_format(now(),'%Y%m%d') then ps.total 
+		                                       when pp.paygubn='CAN' and pp.auth_date = date_format(now(),'%Y%m%d') then 0-ps.total  else 0 end) as total,
+		                              sum(case when pp.paygubn='ACC' and pp.auth_date = date_format(adddate(now(),-1),'%Y%m%d') then ps.total 
+		                                       when pp.paygubn='CAN' and pp.auth_date = date_format(adddate(now(),-1),'%Y%m%d') then 0-ps.total else 0 end) as total2,
+		                              sum(case when pp.paygubn='ACC' and pp.auth_date between  date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d') then ps.total 
+		                                       when pp.paygubn='CAN' and pp.auth_date between  date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d') then 0-ps.total else 0 end) as total3
+		                              from pos_salelist ps
+		                                  inner join pos_payment pp    
+		                                     on ps.compcd = pp.compcd and ps.paymentcd = pp.paymentcd 
+		                                 inner join pos_compproductgroup pc 
+		                                    on ps.compcd = pc.compcd and ps.productcd = pc.productcd 
+		                                  inner join pos_compproduct pc4 
+		                                     on pc.compcd = pc4.compcd and pc.productid = pc4.productid
+		                                 inner join pos_company pc2 
+		                                    on ps.compcd = pc2.compcd
+		                                 inner join pos_chaincompany pc3 
+		                                    on pc2.compcd = pc3.compcd 
+		                              where 1=1 and pc3.chaincode =#{chaincode}
+		                              group by pc.productid,pc.productcd,pc.packingunit
+		                        ) sal      
+		                        group by productid
+		              )mm on pc.productid = mm.productid
+		    left outer join 
+		              (
+		                 select productid,SUBSTRING_INDEX(group_concat(salesprice order by pcnt DESC), ',', 1) AS maprice,min(salesprice) as miprice,max(salesprice) as mxprice
+		                 from (
+		                    select productid,ifnull(salesprice/packingunit,0) as salesprice,count(*) as pcnt
+		                    from pos_compproductgroup
+		                    where salesprice>0 and salesdate >= date_format(date_sub(now(), interval 1 month),'%Y%m%d')
+		                    GROUP BY productid,ifnull(salesprice/packingunit,0)
+		                 )pdate
+		                 group by productid
+		              )mm2 
+		       on pc.productid = mm2.productid
+		           where pc.chaincode =#{chaincode}
+		           order by total3 desc
+		        ) dd ,(SELECT @vrank := 0, @pv := null) as r
+		        where 1=1
+		            <if test="search1 == 'all'">
+		              and concat(productname,productcd,maker) like concat('%',#{searchInput},'%')
+		            </if>
+		            <if test="search1 == 'productname'">
+		               and dd.productname like concat('%',#{searchInput},'%')
+		            </if>
+		            <if test="search1 == 'productcd'">
+		               and dd.productcd like concat('%',#{searchInput},'%')
+		            </if>
+		            <if test="search1 == 'maker'">
+		               and dd.maker like concat('%',#{searchInput},'%')
+		            </if>
+		  )list, (select @rownum := 0) r
+		  ) dd
+		  where page=#{pageno}
+   </select>
+   
+   <!-- 전체 건수 -->
+   <select id="count" parameterType="vo.newvo.ProdListVO" resultType="int">
+		select count(*)
+		 from(
+		    select pc.productname ,
+		          pc.productid ,
+		          pc.productcd ,
+		          pc.maker ,
+		          pc.spec ,
+		          pc.unit ,
+		          pc.`size`,
+		          pc2.categoryname
+		    from pos_chainproduct pc
+		        left outer join pos_category3 pc2 
+		           on pc.category3cd = pc2.category3cd 
+		    where pc.chaincode =#{chaincode}
+		    order by regdt desc
+		 ) dd
+		 where 1=1
+		    <if test="search1 == 'all'">
+		        and concat(productname,productcd,maker) like concat('%',#{searchInput},'%')
+		    </if>
+		    <if test="search1 == 'productname'">
+		       	and dd.productname like concat('%',#{searchInput},'%')
+		    </if>
+		    <if test="search1 == 'productcd'">
+		       	and dd.productcd like concat('%',#{searchInput},'%')
+		    </if>
+		    <if test="search1 == 'maker'">
+		        and dd.maker like concat('%',#{searchInput},'%')
+		    </if>
+   </select>
+   
+   <!-- 상단 집계 조회 -->
+    <select id="prod_tt" parameterType="vo.newvo.ProdTotalVO" resultType="vo.newvo.ProdTotalVO">
+      select count(distinct ps.productid) as ptcnt,
+            count(*) as tcnt,
+            sum(ps.total) as total,
+            sum(ps.amt) as amt,
+            count(distinct (case when ps.salesday between #{searchDate1} and #{searchDate2} then ps.productid else null end)) as sncnt,
+            sum(case when ps.salesday between #{searchDate1} and #{searchDate2} then 1 else 0 end) as scnt,
+            sum(case when ps.salesday between #{searchDate1} and #{searchDate2} then ps.total else 0 end) as stotal,
+            sum(case when ps.salesday between #{searchDate1} and #{searchDate2} then ps.amt else 0 end) as samt,
+            count(distinct (case when pcc.registerdate between adddate(now(),-30) and now() then ps.productid else null end)) as pncnt,
+            sum(case when pcc.registerdate between adddate(now(),-30) and now() then 1 else 0 end) as ncnt,
+            sum(case when pcc.registerdate between adddate(now(),-30) and now() then ps.total else 0 end) as ntotal,
+            sum(case when pcc.registerdate between adddate(now(),-30) and now() then ps.amt else 0 end) as namt
+      from pos_salelist ps 
+         inner join pos_company pp on ps.compcd = pp.compcd 
+         inner join pos_chaincompany pcc on ps.compcd = pcc.compcd and ps.compcd = pcc.compcd 
+      where 1=1
+            and ps.salesday between concat(date_format(now(),'%Y'),'0101') and date_format(now(),'%Y%m%d') 
+            and pcc.chaincode=#{chaincode}
+   </select>
+   
+   <!-- 상품 등록하기 -->
+   <insert id="prod_insert" parameterType="vo.ChainProdVO">
+      insert into pos_chainproduct(
+         chaincode ,
+         productname ,
+         productid ,
+         productcd ,
+         barcode ,
+         maker ,
+         spec ,
+         unit ,
+         size ,
+         remarks ,
+         category3cd ,
+         regcd ,
+         regdt
+      )
+      values(
+         #{chaincode} ,
+         #{productname} ,
+         #{productcd} ,<!-- 처음 상품 등록할 때는 대표코드로 동일하게 등록 -->
+         #{productcd} ,
+         #{productcd} ,
+         #{maker} ,
+         #{spec} ,
+         #{unit} ,
+         #{size} ,
+         #{remarks} ,
+         #{category3cd} ,
+         #{regcd} ,
+         now()
+      ) 
+   </insert>
+   
+   <!-- 클릭한 tr의 정보 상세보기 -->
+   <select id="prod_sel" parameterType="vo.newvo.ProdListVO" resultType="vo.newvo.ProdListVO">
+      select 
+         pc.productname ,
+         pc.productid ,
+         pc.productcd ,
+         pc.barcode ,
+         pc.maker ,
+         pc.spec ,
+         pc.unit ,
+         pc.size ,
+         pc.remarks ,
+         pc.category3cd
+      from pos_chainproduct pc 
+      where chaincode =#{chaincode} and productid=#{productid}
+   </select>
+   
+   <!-- 그룹상품 추가 리스트 조회 -->
+   <select id="ga_list" parameterType="vo.ChaProdGrpVO" resultType="vo.ChaProdGrpVO">
+      select pc.productid ,pc.productcd ,pc.barcode ,pc.productname ,pc.maker ,pc.spec ,pc.unit ,pc.size ,pc.packingunit ,pc.productsid
+      from pos_chainproductgroup pc 
+      where chaincode=#{chaincode} and productid=#{productid}
+   </select>
+   
+   <!-- popup 판매집계 조회 -->
+   <select id="prodtally" parameterType="String" resultType="vo.newvo.ProdTallyVO">
+		select sum(case when pp.paygubn='ACC' then ps.total when pp.paygubn='CAN' then 0-ps.total else 0 end) as total,
+			sum(case when pp.paygubn='ACC' then 1 when pp.paygubn='CAN' then -1 else 0 end) as cnt,
+		    round(sum(case when pp.paygubn='ACC' then ps.total when pp.paygubn='CAN' then 0-ps.total else 0 end)/(DATEDIFF(date_format(now(),'%Y%m%d'),concat(date_format(now(),'%Y'),'0101'))),0) as avg,
+		    round(sum(case when pp.paygubn='ACC' then 1 when pp.paygubn='CAN' then -1 else 0 end)/(DATEDIFF(date_format(now(),'%Y%m%d'),concat(date_format(now(),'%Y'),'0101'))),1) as avg2
+		from pos_salelist ps 
+			inner join pos_payment pp    
+				on ps.compcd = pp.compcd and ps.paymentcd = pp.paymentcd
+		    inner join pos_compproductgroup pc 
+		        on ps.compcd = pc.compcd and ps.productcd = pc.productcd 
+		    inner join pos_compproduct pc4 
+		        on pc.compcd = pc4.compcd and pc.productid = pc4.productid
+		    inner join pos_company pc2 
+		        on ps.compcd = pc2.compcd
+		    inner join pos_chaincompany pc3 
+		        on pc2.compcd = pc3.compcd 
+		where 1=1 
+		    and ps.salesday between concat(date_format(now(),'%Y%'),'0101') and date_format(now(),'%Y%m%d')
+		    and pc.productid=#{productid}
+		    and pc3.chaincode =#{chaincode}
+   </select>
+   
+   <!-- 판매이력 리스트 조회 -->
+   <select id="prodHist" parameterType="vo.newvo.ProdHistVO" resultType="vo.newvo.ProdHistVO">
+		select 
+		   dd.yymmdd,
+		    SUBSTRING_INDEX(group_concat(companyname order by cnt DESC), ',', 1) AS mxcomp,
+		    SUBSTRING_INDEX(group_concat(companyname order by cnt ASC), ',', 1) AS micomp,
+		    sum(total) as total,
+		    sum(cnt) as cnt
+		from(
+		   select date_format(ps.salesdate,'%Y-%m-%d') as yymmdd,
+		       pc2.compcd,
+		        pc2.companyname ,
+		        sum(case when pp.paygubn='ACC' then ps.total when pp.paygubn='CAN' then 0-ps.total else 0 end) as total,
+		        count(case when pp.paygubn='ACC' then 1 when pp.paygubn='CAN' then -1 else 0 end) as cnt
+		   from pos_salelist ps 
+		       inner join pos_payment pp    
+		           on ps.compcd = pp.compcd and ps.paymentcd = pp.paymentcd
+		        inner join pos_compproductgroup pc 
+		           on ps.compcd = pc.compcd and ps.productcd = pc.productcd 
+		        inner join pos_compproduct pc4 
+		           on pc.compcd = pc4.compcd and pc.productid = pc4.productid
+		        inner join pos_company pc2 
+		           on ps.compcd = pc2.compcd
+		        inner join pos_chaincompany pc3 
+		           on pc2.compcd = pc3.compcd 
+		        where 1=1 
+		          and ps.salesday between #{popSearch1} and #{popSearch2}
+		          and pc.productid=#{productid}
+		          and pc3.chaincode =#{chaincode}
+		        group by ps.salesdate,compcd, companyname
+		) dd
+		group by dd.yymmdd
+		order by yymmdd desc
+   </select>
+   
+   <!-- popup 상세보기 저장(상품정보) -->
+   <update id="detUpdate" parameterType="vo.newvo.ProdUpdateVO">
+      update pos_chainproduct
+      set productname = #{d_prodname} ,
+         <!-- productid = #{d_prodcd}, -->
+         productcd = #{d_prodcd} ,
+            barcode = #{d_prodcd} ,
+            maker = #{d_prodmaker} ,
+            spec = #{d_prodspec} ,
+            unit = #{d_produnit} ,
+            size = #{d_prodsize} ,
+            remarks = #{d_prodremarks} ,
+            category3cd = #{category3cd}
+      where productid= #{productid}
+   </update>
+   
+   <!-- popup 상세보기 저장(그룹상품 정보) -->
+   <insert id="insert_ga" parameterType="vo.newvo.ProdUpdateVO">
+      insert into pos_chainproductgroup(
+         chaincode,
+         productsid,
+         productid,
+         productcd,
+         barcode,
+         productname,
+         maker,
+         unit,
+         spec,
+         size,
+         packingunit
+      )
+      values(
+         #{chaincode},
+         fn_barcode('BAR'),
+         #{productid},
+         #{ga_prodcd},
+         #{ga_barcd},
+         #{ga_prodnm},
+         #{ga_maker},
+         #{ga_unit},
+         #{ga_spec},
+         #{ga_size},
+         #{ga_pakunit}
+      )
+   </insert>
+   
+   <!-- 기존 그룹상품 update -->
+   <update id="update_ga" parameterType="vo.newvo.ProdUpdateVO">
+      update pos_chainproductgroup set
+         productcd = #{ga_prodcd},
+         productname = #{ga_prodnm},
+         maker = #{ga_maker},
+         unit = #{ga_unit},
+         spec = #{ga_spec},
+         size = #{ga_size},
+         packingunit = #{ga_pakunit}
+      where productsid=#{ga_productsid}
+   </update>
+   
+   <!-- 카테고리 이름들 가져오기 -->
+   <select id="cate_names" parameterType="vo.newvo.CateVO" resultType="vo.newvo.CateVO">
+   		select 
+			pc.categoryname as cate1,
+			pc.category1cd,
+			pc2.categoryname as cate2,
+			pc2.category2cd,
+			pc3.categoryname as cate3,
+			pc3.category3cd
+		from pos_chaincategory3 pc3
+			inner join pos_chaincategory2 pc2 on pc2.category2cd = pc3.category2cd 
+			inner join pos_chaincategory1 pc on pc.category1cd = pc2.category1cd 
+			left outer join pos_chainproduct pp 
+				on pc3.chaincode = pp.chaincode and pc3.category3cd = pp.category3cd 
+		where pp.chaincode = #{chaincode} and pp.productid = #{productid}
+   </select>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

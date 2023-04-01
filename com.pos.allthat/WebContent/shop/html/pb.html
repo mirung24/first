@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>PB상품관리</title>
+	<link rel="stylesheet" type="text/css"
+		href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="../css/all.min.css">
+	<link rel="stylesheet" href="../css/animate.css">
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/base.css">
+	<link rel="stylesheet" href="../css/common.css">
+	<link rel="stylesheet" href="../css/pb.css">
+	<link rel="stylesheet" href="../css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="../pg-calendar/css/pignose.calendar.min.css">
+	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+	<script src="../js/jquery-3.5.1.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
+	<script src="../js/wow.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="../js/jquery.dataTables.min.js"></script>
+	<script src="../pg-calendar/js/pignose.calendar.full.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="../js/dataTables.buttons.min.js"></script>
+	<script src="../js/buttons.html5.min.js"></script>
+</head>
+<body>
+	<div class="wrapper d-flex justify-content-between m-auto">
+		<ul class="navi-wrap">
+			<div class="logo text-center"><a href="./main.html"><img src="../img/logo.png" alt="로고" class="img pointer"></a></div>
+			<li class="navi"><span><i class="fa-solid fa-user-group mr-2"></i>거래처관리</span><i
+					class="fa-solid fa-angle-right"></i></li>
+			<li class="subs">
+				<ul>
+					<a href="./franchise.html"><li>가맹점정보</li></a>
+					<a href="./client.html"><li>거래처관리</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-cart-shopping mr-2"></i>상품관리</span><i
+					class="fa-solid fa-angle-right"></i></li>
+			<li class="subs">
+				<ul>
+					<a href="./product.html"><li>상품관리</li></a>
+					<a href="./pb.html"><li>PB상품관리</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-truck mr-2"></i>입고관리</span><i
+				class="fa-solid fa-angle-right"></i></li>
+		<li class="subs">
+			<ul>
+				<a href="./order.html"><li>발주요청</li></a>
+				<a href="./incoming.html"><li>입고관리</li></a>
+				<a href="./inventory.html"><li>재고관리</li></a>
+			</ul>
+		</li>
+			<li class="navi"><span><i class="fa-solid fa-id-card-clip mr-2"></i>고객관리</span><i
+					class="fa-solid fa-angle-right"></i></li>
+			<li class="subs">
+				<ul>
+					<a href="./customer.html"><li>고객조회</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-tags mr-2"></i>판매관리</span><i class="fa-solid fa-angle-right"></i>
+			</li>
+			<li class="subs">
+				<ul>
+					<a href="./sell.html"><li>판매내역</li></a>
+					<a href="./useless.html"><li>불용재고</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-gift mr-2"></i>이벤트관리</span><i class="fa-solid fa-angle-right"></i>
+			</li>
+			<li class="subs">
+				<ul>
+					<a href="./event.html"><li>이벤트등록</li></a>
+					<a href="./error.html"><li>이벤트진행내역</li></a>
+					<a href="./coupon.html"><li>쿠폰관리</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-chart-pie mr-2"></i>통계현황</span><i
+				class="fa-solid fa-angle-right"></i></li>
+				<li class="subs">
+					<ul>
+						<a href="./statistics.html"><li>통계현황</li></a>
+						<a href="./calendar.html"><li>매출캘린더</li></a>
+						<a href="./data.html"><li>매출데이터</li></a>
+						<a href="./saleshistory.html"><li>매출내역</li></a>
+						<a href="./customerhistory.html"><li>고객내역</li></a>
+					</ul>
+				</li>
+				<li class="navi"><span><i class="fa-solid fa-comment mr-2"></i>전체게시판</span><i class="fa-solid fa-angle-right"></i>
+				</li>
+				<li class="subs">
+					<ul>
+						<a href="./notice.html"><li>공지사항</li></a>
+					</ul>
+				</li>
+		</ul><!-- navi-wrap -->
+		<div class="section d-flex justify-content-between flex-column">
+			<article>
+				<ul class="user">
+					<div class="navi-close"><i class="fa-solid fa-chevron-right"></i></div>
+					<li class="d-flex justify-content-end align-items-center p-3">
+						<div class="con-wrap position-relative"><i class="fa-regular fa-bell mr-4"></i><span
+								class="bell-num">3</span></div>
+						<span><i class="fa-solid fa-user mr-2"></i>올댓페이 관리자</span>
+						<i class="fa-solid fa-gear ml-4"></i>
+						<button type="button" class="btn btn-logout ml-4"><i class="fa-solid fa-power-off mr-1"></i>로그아웃</button>
+					</li>
+				</ul><!-- user -->
+				<ul class="navi-title d-flex justify-content-between align-items-center">
+					<li>PB상품관리</li>
+					<li>상품관리 <span> > PB상품관리</span></li>
+				</ul><!-- navi-title -->
+
+				<div class="content">
+					<div class="d-flex align-items-center">
+						<input class="form-control form-control-sm pl-2 mr-2" type="text" placeholder="검색어를 입력하세요."
+							style="width: 10rem;">
+						<button type="button" class="btn btn-search mr-2"><i
+								class="fa-solid fa-magnifying-glass mr-1"></i>검색</button>
+					</div>
+
+					<div class="box-wrap d-flex">
+						<div class="box mr-3">
+							<div class="length-wrap d-flex justify-content-between align-items-center">
+								<div class="mb-2 d-flex align-items-center"><span class="bf-wrap"></span></div>
+							</div><!-- length-wrap -->
+							<div class="table-responsive">
+								<div class="table-wrap">
+									<table id="table" class="table table-striped table-hover text-center" style="width: 100%;">
+										<thead>
+											<tr>
+												<th>No.</th>
+												<th>그룹명</th>
+												<th>판매가 변동유무</th>
+												<th>비고</th>
+												<th>사용유무</th>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							</div><!-- table-responsive -->
+							<div class="page-wrap"></div>
+						</div><!-- box -->
+						<div class="box box-show">
+							<li class="pop-list"><span>
+								<!-- 상품명 --></span>
+							<div class=" d-flex">
+								<input class="form-control form-control-sm pl-2 mr-2" type="text" placeholder="검색어를 입력하세요."
+									style="width: 10rem;">
+								<button type="button" class="btn btn-search mr-2"><i
+										class="fa-solid fa-magnifying-glass mr-1"></i>검색</button></div>
+						</li>
+
+						<div class="table-responsive" style="height: 38.5rem;">
+							<table class="table table-hover table-striped text-center mb-0">
+								<thead>
+									<tr>
+										<th>No.</th>
+										<th>상품명</th>
+										<th>제품코드</th>
+										<th>제조사</th>
+										<th style="min-width: 4.5rem;">규격(단위)</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>6</td>
+										<td>올톡페이1</td>
+										<td>SC001</td>
+										<td>올댓올댓페이</td>
+										<td>규격(단위)</td>
+									</tr>
+									<tr>
+										<td>5</td>
+										<td>올톡페이11</td>
+										<td>SC002</td>
+										<td>올댓페이</td>
+										<td>규격(단위)</td>
+									</tr>
+									<tr>
+										<td>4</td>
+										<td>올톡페이11111</td>
+										<td>SC003</td>
+										<td>올댓페이올댓페이</td>
+										<td>규격(단위)</td>
+									</tr>
+									<tr>
+										<td>3</td>
+										<td>올톡페이1111</td>
+										<td>SC004</td>
+										<td>올댓페이</td>
+										<td>규격(단위)</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td>올톡페이1111</td>
+										<td>SC004</td>
+										<td>올댓페이</td>
+										<td>규격(단위)</td>
+									</tr>
+									<tr>
+										<td>1</td>
+										<td>올톡페이1111</td>
+										<td>SC004</td>
+										<td>올댓페이</td>
+										<td>규격(단위)</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						</div>
+
+					</div>
+				</div><!-- content -->
+			</article>
+
+			<footer class="d-flex justify-content-between align-items-center p-3">
+				<div>2022 © ALLTHATPAY.</div>
+				<div>대표번호 1811 - 6277</div>
+			</footer><!-- footer -->
+
+		</div><!-- section -->
+	</div><!-- wrapper -->
+
+	<div class="top-wrap">
+		<div class="bt-top"><i class="fa fa-angle-up"></i></div>
+	</div><!-- top-wrap -->
+
+	<a href="https://www.whelper.co.kr/allthat" target='_blank'>
+		<div class="whelper-wrap">
+			<div class="whelper"><i class="fa-solid fa-wifi"></i>
+				<div>원격지원</div>
+			</div>
+		</div>
+	</a>
+	<script src="../js/common.js"></script>
+	<script src="../js/pb.js"></script>
+</body>
+</html>

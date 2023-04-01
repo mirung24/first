@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="main">
+	<!-- 전일집계 -->
+	<select id="yesterday" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select 
+			ifnull(pp.etc,0) as tetc, -- 조제매출
+			ifnull(pp.otc,0) as totc, -- 일반매출
+			ifnull(pp.mcnt,0) + ifnull(pp.fcnt,0) as cust, -- 고객수
+			ifnull(pp.mcnt,0) as mcnt, -- 남고객
+			ifnull(pp.fcnt,0) as fcnt, -- 여고객
+			ifnull(pp.compcnt,0) as compcnt -- 가맹점수
+		from pos_payment_chain_daysum pp
+		where 1=1
+			and chaincode = #{chaincode}
+			and auth_date = date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+	</select>
+	
+	<!-- 금년집계 -->
+	<select id="thisyear" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select
+			ifnull(sum(pp.etc),0) as yetc, -- 연 조제매출
+			ifnull(sum(pp.otc),0) as yotc, -- 연 일반매출
+			ifnull(sum(pp.total),0) as ytotal -- 연 총매출
+		from pos_payment_chain_daysum pp
+		where 1=1
+			and chaincode = #{chaincode}
+			and auth_date between concat(date_format(now(),'%Y'),'0101') and date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+	</select>
+	
+	<!-- 이번달 집계 -->
+	<select id="thismonth" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select 
+			ifnull(sum(pp.etc),0) as metc, -- 달 조제매출
+			ifnull(sum(pp.otc),0) as motc -- 달 일반매출
+		from pos_payment_chain_daysum pp
+		where 1=1
+			and chaincode = #{chaincode}
+			and auth_date between concat(date_format(now(),'%Y%m'),'01') and date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+	</select>
+	
+	<!-- 주간집계 -->
+	<select id="thisweek" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select 
+			ifnull(sum(pp.etc),0) as wetc, -- 주 조제매출
+			ifnull(sum(pp.otc),0) as wotc, -- 주 일반매출
+			ifnull(sum(pp.mcnt),0)+ifnull(sum(pp.fcnt),0) as wcust -- 주 고객수
+		from pos_payment_chain_daysum pp
+		where 1=1
+			and chaincode = #{chaincode}
+			and auth_date between date_format(now() - INTERVAL 7 DAY,'%Y%m%d') and date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+	</select>
+	
+	<!-- 신규가맹점 집계 -->
+	<select id="newcomp" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select
+			ifnull(sum(case when date_format(pc2.registerdate,'%Y') = date_format(now(),'%Y') then 1 else 0 end),0) as yycnt, -- 연 신규가맹점
+			ifnull(sum(case when date_format(pc2.registerdate,'%Y%m') = date_format(now(),'%Y%m') then 1 else 0 end),0) as mmcnt, -- 이번달 신규가맹점
+			ifnull(sum(case when date_format(pc2.registerdate,'%Y%m%d') between date_format(ADDDATE(now(),1-(DAYOFWEEK(now()))),'%Y%m%d')
+					and date_format(ADDDATE(now(),7-(DAYOFWEEK(now()))),'%Y%m%d') then 1 else 0 end),0) as wecnt -- 주간 신규가맹점
+		from pos_company pc 
+		   inner join pos_chaincompany pc2 on pc.compcd = pc2.compcd and pc2.chaincode=#{chaincode}
+	</select>
+	
+	<!-- best 고객층 -->
+	<select id="best" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select concat(
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=10m then '10m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=10f then '10f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=20m then '20m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=20f then '20f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=30m then '30m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=30f then '30f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=40m then '40m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=40f then '40f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=50m then '50m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=50f then '50f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=60m then '60m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=60f then '60f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=70m then '70m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=70f then '70f' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=80m then '80m' else '' end,
+		   case when GREATEST(`10m`,`10f`,`20m`,`20f`,`30m`,`30f`,`40m`,`40f`,`50m`,`50f`,`60m`,`60f`,`70m`,`70f`,`80m`, `80f`)=80f then '80f' else '' end) as best
+		from
+		(
+		   select 
+		      sum(pp.`10m`) as `10m`,
+		      sum(pp.`10f`) as `10f`,
+		      sum(pp.`20m`) as `20m`,
+		      sum(pp.`20f`) as `20f`,
+		      sum(pp.`30m`) as `30m`,
+		      sum(pp.`30f`) as `30f`,
+		      sum(pp.`40m`) as `40m`,
+		      sum(pp.`40f`) as `40f`,
+		      sum(pp.`50m`) as `50m`,
+		      sum(pp.`50f`) as `50f`,
+		      sum(pp.`60m`) as `60m`,
+		      sum(pp.`60f`) as `60f`,
+		      sum(pp.`70m`) as `70m`,
+		      sum(pp.`70f`) as `70f`,
+		      sum(pp.`80m`) as `80m`,
+		      sum(pp.`80f`) as `80f`
+		   from pos_payment_chain_daysum pp
+		   where 1=1
+		      and chaincode = #{chaincode}
+		      and auth_date between date_format(now() - INTERVAL 7 DAY,'%Y%m%d') and date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+		) a
+	</select>
+	
+	<!-- 타임라인(주간) -->
+	<select id="weektl" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select
+			date_format(pp.auth_date,'%y.%m.%d') as tldate,
+			pp.compcnt,
+			round(pp.total/1000000) as total,
+			round(pp.etc/1000000) as etc,
+			round(pp.otc/10000000) as otc,
+			round(pp.total/pp.compcnt) as average,
+			pc.companyname as mxcompcd,
+			pc2.companyname as micompcd 
+		from pos_payment_chain_daysum pp
+			inner join pos_company pc on pp.mxcompcd = pc.compcd 
+			inner join pos_company pc2 on pp.micompcd = pc2.compcd 
+		where 1=1
+			and chaincode = #{chaincode}
+			and auth_date between date_format(now() - INTERVAL 6 DAY,'%Y%m%d') and date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+		order by tldate desc
+	</select>
+	
+	<!-- 타임라인(월간) -->
+	<select id="monthtl" parameterType="String" resultType="vo.newvo.MainInfoVO">
+		select
+			date_format(pp.auth_date, '%y년%m월') as tldate,
+			round(sum(compcnt)) as compcnt,
+			round(sum(pp.total)/1000000) as total,
+			round(sum(pp.etc)/1000000) as etc,
+			round(sum(pp.otc)/1000000) as otc,
+			round(sum(pp.total)/sum(pp.compcnt)) as average,
+			max(pc.companyname) as mxcompcd,
+			max(pc2.companyname) as micompcd
+		from pos_payment_chain_daysum pp
+		left outer join (
+			select
+				#{chaincode} as chaincode,
+				substring_index(group_concat(compcd order by tot desc),',',1) as mxcompcd,
+				substring_index(group_concat(compcd order by tot asc),',',1) as micompcd
+			from
+			(
+				select pp.compcd, sum(total) as tot
+				from pos_payment_daysum pp
+					inner join pos_chaincompany pc 
+						on pp.compcd = pc.compcd 
+				where 1=1
+				    and pc.chaincode =#{chaincode}
+					and pp.auth_date between '20230301' and '20230330'
+				group by pp.compcd order by sum(total) desc
+			)dat
+		)da on pp.chaincode = da.chaincode
+		inner join pos_company pc on da.mxcompcd = pc.compcd 
+		inner join pos_company pc2 on da.micompcd = pc2.compcd 
+		where 1=1
+			and pp.chaincode = #{chaincode}
+			and pp.auth_date between date_format(now() - INTERVAL 3 MONTH,'%Y%m%d') and date_format(now(),'%Y%m%d')
+		group by tldate
+		order by tldate desc
+	</select>
+	
+	<!-- 주간 가맹점 순위 -->
+	<select id="comprank" parameterType="vo.newvo.MainGraphVO" resultType="vo.newvo.MainGraphVO">
+		select dat.*
+		from(
+			select replace(FORMAT(@rownum := @rownum+1,0),',','') as no,sa.*
+			from(
+				select pc.compcd, sum(pp.total) as total, pc2.companyname, sum(pp.appcnt)-sum(pp.cancnt) as cnt
+				from pos_payment_daysum pp
+					inner join pos_chaincompany pc on pc.compcd = pp.compcd
+					inner join pos_company pc2 on pp.compcd = pc2.compcd 
+				where 1=1
+					and pc.chaincode = #{chaincode}
+					and auth_date between date_format(now() - INTERVAL 6 DAY,'%Y%m%d') and date_format(now() - INTERVAL 1 DAY,'%Y%m%d')
+				group by pc.compcd
+				<if test="option.equals('total') and sel.equals('top')">
+				order by total desc
+				</if>
+				<if test="option.equals('total') and sel.equals('bot')">
+				order by total asc
+				</if>
+				<if test="option.equals('count') and sel.equals('top')">
+				order by cnt desc
+				</if>
+				<if test="option.equals('count') and sel.equals('bot')">
+				order by cnt asc
+				</if>
+			) sa, (select @rownum:=0) r
+		) dat
+		<![CDATA[where dat.no<=10]]>
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 그래프 조회 -->
+	<select id="sales_grf" parameterType="String" resultType="vo.newvo.MainGraphVO">
+		SELECT wda.wday,
+		   round(ifnull(w1.tot,0)/1000) as tot1,
+		   round(ifnull(w2.tot,0)/1000) as tot2,
+		   ifnull(w1.cust,0) as cust1,
+		   ifnull(w2.cust,0) as cust2,
+		   round(ifnull(w1.ntot,0)/1000) as ntot1,
+		   round(ifnull(w2.ntot,0)/1000) as ntot2
+		from (
+		select 1 as d ,'일' as wday
+		union all
+		select 2 as d ,'월' as wday
+		union all 
+		select 3 as d ,'화' as wday
+		union all 
+		select 4 as d ,'수' as wday
+		union all 
+		select 5 as d ,'목' as wday
+		union all 
+		select 6 as d ,'금' as wday
+		union all 
+		select 7 as d ,'토' as wday
+		) wda 
+		left outer join
+		(
+		   select
+		         DAYOFWEEK(date_format(ps.auth_date,'%Y%m%d')) as d,
+		         sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) as tot,
+		         count(distinct(concat(ps.birthday,ps.sex,ps.hp))) as cust,
+		         sum(case when pc2.registerdate between adddate(now(),-30) and now() then ps.total else 0 end) as ntot
+		   from pos_company pc 
+		      inner join pos_chaincompany pc2 on pc.compcd = pc2.compcd and pc2.chaincode=#{chaincode}
+		      inner join pos_payment ps on pc.compcd = ps.compcd 
+		   where 1=1
+		         and ps.auth_date between date_format(ADDDATE(now(),1-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		   group by ps.auth_date    
+		)w1 on wda.d = w1.d
+		left outer join
+		(
+		   select
+		         DAYOFWEEK(date_format(ps.auth_date,'%Y%m%d')) as d,
+		         sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) as tot,
+		         count(distinct(concat(ps.birthday,ps.sex,ps.hp))) as cust,
+		         sum(case when pc2.registerdate between adddate(now(),-30) and now() then ps.total else 0 end) as ntot
+		   from pos_company pc 
+		      inner join pos_chaincompany pc2 on pc.compcd = pc2.compcd and pc2.chaincode=#{chaincode}
+		      inner join pos_payment ps on pc.compcd = ps.compcd 
+		   where 1=1
+		         and ps.auth_date between date_format(ADDDATE(now(),1-7-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(ADDDATE(now(),0-(DAYOFWEEK(now()))),'%Y%m%d')
+		   group by ps.auth_date    
+		)w2 on wda.d = w2.d
+	</select>
+	
+	<!-- 주간best 가맹점 조회 -->
+	<select id="best_com" parameterType="String" resultType="vo.newvo.MainChartVO1">
+		select dat.*
+		from(
+		   select replace(FORMAT(@rownum := @rownum+1,0),',','') as no,sa.*
+		   from(
+		   select pc.compcd,pc2.companyname ,sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) as total
+		   from pos_payment ps
+		      inner join pos_chaincompany pc 
+		         on ps.compcd = pc.compcd and pc.chaincode=#{chaincode}
+		      inner join pos_company pc2 
+		         on ps.compcd = pc2.compcd and pc.compcd = pc2.compcd 
+		   where  1=1
+		            and ps.auth_date between date_format(ADDDATE(now(),1-7-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		   group by pc.compcd,pc2.companyname
+		   order by sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) desc
+		   )sa, (select @rownum:=0) r   
+		)dat
+		<![CDATA[where dat.no<=10]]>
+	</select>
+	
+	<!-- 주간best 상품 조회 -->
+	<select id="best_prod" parameterType="String" resultType="vo.newvo.MainChartVO2">
+		select dat.*
+		from(
+		   select replace(FORMAT(@rownum := @rownum+1,0),',','') as no,sa.*
+		   from(
+		   select  pc3.productid , pc3.productname , sum(case when pp.paygubn='ACC' then ifnull(ps.amt,0)+ifnull(ps.vat,0) when pp.paygubn='CAN' then 0-(ifnull(ps.amt,0)+ifnull(ps.vat,0)) else 0 end) as total
+		   from pos_salelist ps
+		        inner join pos_payment pp 
+		           on ps.compcd = pp.compcd and ps.paymentcd = pp.paymentcd 
+		      inner join pos_chaincompany pc 
+		         on ps.compcd = pc.compcd and pc.chaincode=#{chaincode}
+		       inner join pos_compproductgroup pc2 
+		          on ps.productcd = pc2.productcd and ps.compcd = pc2.compcd and pc.compcd = pc2.compcd
+		       inner join pos_compproduct pc3 
+		          on pc.compcd = pc3.compcd and pc2.compcd = pc3.compcd and pc2.productid = pc3.productid 
+		   where  1=1
+		            and ps.salesday between date_format(ADDDATE(now(),1-7-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		   group by pc3.productid, pc3.productname
+		   order by sum(case when pp.paygubn='ACC' then ifnull(ps.amt,0)+ifnull(ps.vat,0) when pp.paygubn='CAN' then 0-(ifnull(ps.amt,0)+ifnull(ps.vat,0)) else 0 end) desc
+		   )sa, (select @rownum:=0) r   
+		)dat
+		<![CDATA[where dat.no<=10]]>
+	</select>
+	
+	<!-- 주간 worst 가맹점 조회 -->
+	<select id="worst_com" parameterType="String" resultType="vo.newvo.MainChartVO3">
+		select dat.*
+		from(
+		   select replace(FORMAT(@rownum := @rownum+1,0),',','') as no,sa.*
+		   from(
+		   select pc.compcd,pc2.companyname ,sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) as total
+		   from pos_payment ps
+		      inner join pos_chaincompany pc 
+		         on ps.compcd = pc.compcd and pc.chaincode=#{chaincode}
+		      inner join pos_company pc2 
+		         on ps.compcd = pc2.compcd and pc.compcd = pc2.compcd 
+		   where  1=1
+		            and ps.auth_date between date_format(ADDDATE(now(),1-7-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		   group by pc.compcd,pc2.companyname
+		   order by sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) asc
+		   )sa, (select @rownum:=0) r   
+		)dat
+		<![CDATA[where dat.no<=10]]>
+	</select>
+	
+	<!-- 주간 worst 상품 조회 -->
+	<select id="worst_prod" parameterType="String" resultType="vo.newvo.MainChartVO4">
+		select dat.*
+		from(
+		   select replace(FORMAT(@rownum := @rownum+1,0),',','') as no,sa.*
+		   from(
+		   select  pc3.productid , pc3.productname , sum(case when pp.paygubn='ACC' then ifnull(ps.amt,0)+ifnull(ps.vat,0) when pp.paygubn='CAN' then 0-(ifnull(ps.amt,0)+ifnull(ps.vat,0)) else 0 end) as total
+		   from pos_salelist ps
+		        inner join pos_payment pp 
+		           on ps.compcd = pp.compcd and ps.paymentcd = pp.paymentcd 
+		      inner join pos_chaincompany pc 
+		         on ps.compcd = pc.compcd and pc.chaincode=#{chaincode}
+		       inner join pos_compproductgroup pc2 
+		          on ps.productcd = pc2.productcd and ps.compcd = pc2.compcd and pc.compcd = pc2.compcd
+		       inner join pos_compproduct pc3 
+		          on pc.compcd = pc3.compcd and pc2.compcd = pc3.compcd and pc2.productid = pc3.productid 
+		   where  1=1
+		            and ps.salesday between date_format(ADDDATE(now(),1-7-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		   group by pc3.productid, pc3.productname
+		   order by sum(case when pp.paygubn='ACC' then ifnull(ps.amt,0)+ifnull(ps.vat,0) when pp.paygubn='CAN' then 0-(ifnull(ps.amt,0)+ifnull(ps.vat,0)) else 0 end) asc
+		   )sa, (select @rownum:=0) r   
+		   <![CDATA[where total > 0]]>
+		)dat
+		<![CDATA[where dat.no<=10]]>
+	</select>
+	
+	<!-- 신규 가맹점 매출 -->
+	<select id="ncom_total" parameterType="String" resultType="vo.newvo.MainChartVO5">
+		select dat.*
+		from(
+		   select replace(FORMAT(@rownum := @rownum+1,0),',','') as no,sa.*
+		   from(
+		   select pc.compcd, pc2.companyname ,date_format(pc.registerdate,'%Y.%m.%d')as endate,sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) as total
+		   from pos_payment ps
+		      inner join pos_chaincompany pc 
+		         on ps.compcd = pc.compcd and pc.chaincode=#{chaincode}
+		      inner join pos_company pc2 
+		         on ps.compcd = pc2.compcd and pc.compcd = pc2.compcd 
+		   where  1=1
+		            and ps.auth_date between date_format(ADDDATE(now(),1-7-(DAYOFWEEK(now()))),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		            and date_format(pc.registerdate,'%Y%m%d') between date_format(ADDDATE(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d')
+		   group by pc.compcd
+		   order by sum(case when ps.paygubn='ACC' then total when ps.paygubn='CAN' then 0-total else 0 end) desc
+		   )sa, (select @rownum:=0) r   
+		)dat
+		<![CDATA[where dat.no<=10]]>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

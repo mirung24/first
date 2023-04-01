@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="scate">
+	
+	<!-- 만들어진 카테고리가 있는지 확인 -->
+	<select id="scate_check" parameterType="vo.newvo.CateVO" resultType="int">
+		select count(*) from pos_compcategory1 pc where compcd = #{compcd}
+	</select>
+	
+	<!-- 카테고리1 리스트 가져오기 -->
+	<select id="scate1_list" parameterType="vo.newvo.CateVO" resultType="vo.newvo.CateVO">
+		select
+			pc.category1cd,
+			pc.categoryname,
+			pc.remarks,
+			pc.useyn,
+			pc.ordernum,
+			count(pc2.category2cd) as cnt
+		from pos_compcategory1 pc
+			left outer join pos_compcategory2 pc2 
+				on pc.compcd = pc2.compcd and pc.category1cd = pc2.category1cd
+		where pc.compcd =#{compcd}
+		group by pc.category1cd, pc.categoryname, pc.remarks, pc.useyn, pc.ordernum
+		order by ordernum asc
+	</select>
+	
+	<!-- 카테고리2 리스트 가져오기 -->
+	<select id="scate2_list" parameterType="vo.newvo.CateVO" resultType="vo.newvo.CateVO">
+		select 
+			pc2.category2cd,
+			pc2.categoryname,
+			pc2.remarks,
+			pc2.useyn,
+			pc2.ordernum,
+			count(pc3.category3cd) as cnt
+		from pos_compcategory2 pc2
+			inner join pos_compcategory1 pc on pc.category1cd = pc2.category1cd
+			left outer join pos_compcategory3 pc3 
+				on pc2.compcd = pc3.compcd and pc2.category2cd = pc3.category2cd 
+		where pc2.category1cd = #{category1cd} and pc2.compcd = #{compcd}
+		group by pc2.category2cd, pc2.categoryname, pc2.remarks, pc2.useyn, pc2.ordernum
+		order by ordernum asc
+	</select>
+	
+	<!-- 카테고리3 리스트 가져오기 -->
+	<select id="scate3_list" parameterType="vo.newvo.CateVO" resultType="vo.newvo.CateVO">
+		select 
+			pc3.category3cd,
+			pc3.categoryname,
+			pc3.remarks,
+			pc3.useyn,
+			pc3.ordernum,
+			count(pp.category3cd) as cnt
+		from pos_compcategory3 pc3
+			inner join pos_compcategory2 pc2 on pc2.category2cd = pc3.category2cd 
+			left outer join pos_compproduct pp 
+				on pc3.compcd = pp.compcd and pc3.category3cd = pp.category3cd 
+		where pc3.category2cd = #{category2cd} and pc3.compcd = #{compcd}
+		group by pc3.category3cd, pc3.categoryname, pc3.remarks, pc3.useyn, pc3.ordernum
+		order by ordernum asc
+	</select>
+	
+	<!-- 1차 카테고리 사용유무 변경 -->
+	<update id="scate1_useyn" parameterType="vo.newvo.CateVO">
+		update pos_compcategory1 set useyn = #{useyn} 
+		where compcd = #{compcd} and category1cd = #{category1cd}
+	</update>
+	
+	<!-- 2차 카테고리 사용유무 변경 -->
+	<update id="scate2_useyn" parameterType="vo.newvo.CateVO">
+		update pos_compcategory2 set useyn = #{useyn} 
+		where compcd = #{compcd} and category2cd = #{category2cd}
+	</update>
+	
+	<!-- 3차 카테고리 사용유무 변경 -->
+	<update id="scate3_useyn" parameterType="vo.newvo.CateVO">
+		update pos_compcategory3 set useyn = #{useyn} 
+		where compcd = #{compcd} and category3cd = #{category3cd}
+	</update>
+	
+	<!-- 1차 카테고리 코드 만들깅 -->
+	<select id="scate1_code" resultType="String">
+		select fn_getuuid('SCA1') as category1cd
+	</select>
+	
+	<!-- 2차 카테고리코드 만들깅 -->
+	<select id="scate2_code" resultType="String">
+		select fn_getuuid('SCA2') as category2cd
+	</select>
+	
+	<!-- 3차 카테고리코드 만들깅 -->
+	<select id="scate3_code" resultType="String">
+		select fn_getuuid('SCA3') as category3cd
+	</select>
+	
+	<!-- 1차 카테고리 추가 -->
+	<insert id="scate1_add" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory1 (
+			compcd,
+			category1cd,
+			categoryname,
+			remarks,
+			useyn,
+			ordernum
+		) values (
+			#{compcd},
+			#{category1cd},
+			#{categoryname},
+			'',
+			'Y',
+			#{ordernum}
+		)
+	</insert>
+	
+	<!-- 2차 카테고리 추가 -->
+	<insert id="scate2_add" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory2 (
+			compcd,
+			category2cd,
+			category1cd,
+			categoryname,
+			remarks,
+			useyn,
+			ordernum
+		) values (
+			#{compcd},
+			#{category2cd},
+			#{category1cd},
+			#{categoryname},
+			'',
+			'Y',
+			#{ordernum}
+		)
+	</insert>
+	
+	<!-- 3차 카테고리 추가 -->
+	<insert id="scate3_add" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory3 (
+			compcd,
+			category3cd,
+			category2cd,
+			categoryname,
+			remarks,
+			useyn,
+			ordernum
+		) values (
+			#{compcd},
+			#{category3cd},
+			#{category2cd},
+			#{categoryname},
+			'',
+			'Y',
+			#{ordernum}
+		)
+	</insert>
+	
+	<!-- 1차 카테고리 수정 -->
+	<update id="scate1_modi" parameterType="vo.newvo.CateVO">
+		update pos_compcategory1 set categoryname = #{categoryname}
+		where category1cd = #{category1cd} and compcd = #{compcd}
+	</update>
+	
+	<!-- 2차 카테고리 수정 -->
+	<update id="scate2_modi" parameterType="vo.newvo.CateVO">
+		update pos_compcategory2 set
+			category1cd = #{category1cd},
+			categoryname = #{categoryname}
+		where category2cd = #{category2cd} and compcd = #{compcd}
+	</update>
+	
+	<!-- 3차 카테고리 수정 -->
+	<update id="scate3_modi" parameterType="vo.newvo.CateVO">
+		update pos_compcategory3 set
+			category2cd = #{category2cd},
+			categoryname = #{categoryname}
+		where category3cd = #{category3cd} and compcd = #{compcd}
+	</update>
+	
+	<!-- 1차 카테고리 순서변경 -->
+	<update id="scate1_numC" parameterType="vo.newvo.CateVO">
+		update pos_compcategory1 set ordernum = #{Cordernum} 
+		where category1cd = #{Ccategory1cd} and compcd = #{compcd}
+	</update>
+	
+	<!-- 2차 카테고리 순서변경 -->
+	<update id="scate2_numC" parameterType="vo.newvo.CateVO">
+		update pos_compcategory2 set ordernum = #{Cordernum} 
+		where category2cd = #{Ccategory2cd} and compcd = #{compcd}
+	</update>	
+	
+	<!-- 3차 카테고리 순서변경 -->
+	<update id="scate3_numC" parameterType="vo.newvo.CateVO">
+		update pos_compcategory3 set ordernum = #{Cordernum} 
+		where category3cd = #{Ccategory3cd} and compcd = #{compcd}
+	</update>
+	
+	<!-- 체인본점 카테고리 사용하기 1차 -->
+	<insert id="chainUse1" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory1 
+		(compcd, category1cd, categoryname, remarks, useyn, ordernum)
+		select 
+			#{compcd},
+			category1cd, 
+			categoryname, 
+			remarks, 
+			useyn, 
+			ordernum 
+		from pos_chaincategory1 where chaincode = #{chaincode} and useyn = 'Y'
+	</insert>
+	
+	<!-- 체인본점 카테고리 사용하기 2차 -->
+	<insert id="chainUse2" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory2 
+		(compcd, category2cd, category1cd, categoryname, remarks, useyn, ordernum)
+		select 
+			#{compcd},
+			category2cd,
+			category1cd, 
+			categoryname, 
+			remarks, 
+			useyn, 
+			ordernum
+		from pos_chaincategory2 where chaincode = #{chaincode} and useyn = 'Y'
+	</insert>
+	
+	<!-- 체인본점 카테고리 사용하기 3차 -->
+	<insert id="chainUse3" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory3 
+		(compcd, category3cd, category2cd, categoryname, remarks, useyn, ordernum)
+		select
+			#{compcd},
+			category3cd,
+			category2cd,
+			categoryname,
+			remarks,
+			useyn,
+			ordernum
+		from pos_chaincategory3 where chaincode = #{chaincode} and useyn = 'Y'
+	</insert>
+	
+	<!-- 올댓페이 카테고리 사용하기 1차 -->
+	<insert id="use1" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory1 
+		(compcd, category1cd, categoryname, remarks, useyn, ordernum)
+		select 
+			#{compcd},
+			category1cd, 
+			categoryname, 
+			remarks, 
+			useyn, 
+			ordernum 
+		from pos_category1
+	</insert>
+	
+	<!-- 올댓페이 카테고리 사용하기 2차 -->
+	<insert id="use2" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory2 
+		(compcd, category2cd, category1cd, categoryname, remarks, useyn, ordernum)
+		select 
+			#{compcd},
+			category2cd,
+			category1cd, 
+			categoryname, 
+			remarks, 
+			useyn, 
+			ordernum
+		from pos_category2
+	</insert>
+	
+	<!-- 올댓페이 카테고리 사용하기 3차 -->
+	<insert id="use3" parameterType="vo.newvo.CateVO">
+		insert into pos_compcategory3 
+		(compcd, category3cd, category2cd, categoryname, remarks, useyn, ordernum)
+		select
+			#{compcd},
+			category3cd,
+			category2cd,
+			categoryname,
+			remarks,
+			useyn,
+			ordernum
+		from pos_category3
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

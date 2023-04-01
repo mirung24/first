@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>가맹점정보</title>
+	<link rel="stylesheet" type="text/css"
+		href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="../css/all.min.css">
+	<link rel="stylesheet" href="../css/animate.css">
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/base.css">
+	<link rel="stylesheet" href="../css/common.css">
+	<link rel="stylesheet" href="../css/franchise.css">
+	<link rel="stylesheet" href="../css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="../pg-calendar/css/pignose.calendar.min.css">
+	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+	<script src="../js/jquery-3.5.1.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
+	<script src="../js/wow.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="../js/jquery.dataTables.min.js"></script>
+	<script src="../pg-calendar/js/pignose.calendar.full.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="../js/dataTables.buttons.min.js"></script>
+	<script src="../js/buttons.html5.min.js"></script>
+</head>
+<body>
+	<div class="wrapper d-flex justify-content-between m-auto">
+		<ul class="navi-wrap">
+			<div class="logo text-center"><a href="./main.html"><img src="../img/logo.png" alt="로고" class="img pointer"></a></div>
+			<li class="navi"><span><i class="fa-solid fa-user-group mr-2"></i>거래처관리</span><i
+					class="fa-solid fa-angle-right"></i></li>
+			<li class="subs">
+				<ul>
+					<a href="./franchise.html"><li>가맹점정보</li></a>
+					<a href="./client.html"><li>거래처관리</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-cart-shopping mr-2"></i>상품관리</span><i
+					class="fa-solid fa-angle-right"></i></li>
+			<li class="subs">
+				<ul>
+					<a href="./product.html"><li>상품관리</li></a>
+					<a href="./pb.html"><li>PB상품관리</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-truck mr-2"></i>입고관리</span><i
+				class="fa-solid fa-angle-right"></i></li>
+		<li class="subs">
+			<ul>
+				<a href="./order.html"><li>발주요청</li></a>
+				<a href="./incoming.html"><li>입고관리</li></a>
+				<a href="./inventory.html"><li>재고관리</li></a>
+			</ul>
+		</li>
+			<li class="navi"><span><i class="fa-solid fa-id-card-clip mr-2"></i>고객관리</span><i
+					class="fa-solid fa-angle-right"></i></li>
+			<li class="subs">
+				<ul>
+					<a href="./customer.html"><li>고객조회</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-tags mr-2"></i>판매관리</span><i class="fa-solid fa-angle-right"></i>
+			</li>
+			<li class="subs">
+				<ul>
+					<a href="./sell.html"><li>판매내역</li></a>
+					<a href="./useless.html"><li>불용재고</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-gift mr-2"></i>이벤트관리</span><i class="fa-solid fa-angle-right"></i>
+			</li>
+			<li class="subs">
+				<ul>
+					<a href="./event.html"><li>이벤트등록</li></a>
+					<a href="./error.html"><li>이벤트진행내역</li></a>
+					<a href="./coupon.html"><li>쿠폰관리</li></a>
+				</ul>
+			</li>
+			<li class="navi"><span><i class="fa-solid fa-chart-pie mr-2"></i>통계현황</span><i
+				class="fa-solid fa-angle-right"></i></li>
+				<li class="subs">
+					<ul>
+						<a href="./statistics.html"><li>통계현황</li></a>
+						<a href="./calendar.html"><li>매출캘린더</li></a>
+						<a href="./data.html"><li>매출데이터</li></a>
+						<a href="./saleshistory.html"><li>매출내역</li></a>
+						<a href="./customerhistory.html"><li>고객내역</li></a>
+					</ul>
+				</li>
+				<li class="navi"><span><i class="fa-solid fa-comment mr-2"></i>전체게시판</span><i class="fa-solid fa-angle-right"></i>
+				</li>
+				<li class="subs">
+					<ul>
+						<a href="./notice.html"><li>공지사항</li></a>
+					</ul>
+				</li>
+		</ul><!-- navi-wrap -->
+		<div class="section d-flex justify-content-between flex-column">
+			<article>
+				<ul class="user">
+					<div class="navi-close"><i class="fa-solid fa-chevron-right"></i></div>
+					<li class="d-flex justify-content-end align-items-center p-3">
+						<div class="con-wrap position-relative"><i class="fa-regular fa-bell mr-4"></i><span
+								class="bell-num">3</span></div>
+						<span><i class="fa-solid fa-user mr-2"></i>올댓페이 관리자</span>
+						<i class="fa-solid fa-gear ml-4"></i>
+						<button type="button" class="btn btn-logout ml-4"><i class="fa-solid fa-power-off mr-1"></i>로그아웃</button>
+					</li>
+				</ul><!-- user -->
+				<ul class="navi-title d-flex justify-content-between align-items-center">
+					<li>가맹점정보</li>
+					<li>거래처관리 <span> > 가맹점정보</span></li>
+				</ul><!-- navi-title -->
+
+				<div class="content">
+					<div class="box d-flex mt-0">
+						<ul>
+							<li class="pop-list"><span>사업자번호</span><input type="text" disabled class="form-control"
+									value="110-11-11111"></li>
+							<li class="pop-list"><span>가맹점명</span><input type="text" class="form-control" value="올댓페이"></li>
+							<li class="pop-list"><span>대표자</span><input type="text" class="form-control" value="도준호"></li>
+							<li class="pop-list"><span>주소</span><input type="text" class="form-control"
+									value="서울시 금천구 범안로 1126 대륭21차 1107호"></li>
+							<li class="pop-list"><span>전화번호</span><input type="text" class="form-control" value="02-1811-6277"></li>
+							<li class="pop-list"><span>휴대폰번호</span><input type="text" class="form-control" value="010-1234-5678"></li>
+							<li class="pop-list"><span>팩스번호</span><input type="text" class="form-control" value="02-1811-6277"></li>
+							<li class="pop-list"><span>이메일</span><input type="text" class="form-control"
+									value="webmaster@allthatpay.kr"></li>
+							<li class="pop-list"><span>개설일</span><input type="text" id="date1"
+									class="form-control date1 calendar calendar-img w-100"></li>
+							<li class="pop-list"><span>가맹일</span><input type="text" id="date1"
+									class="form-control date1 calendar calendar-img w-100"></li>
+							<li class="pop-list"><span>세금계산서 이메일</span><input type="text" class="form-control"
+									value="webmaster@allthatpay.kr"></li>
+							<li class="pop-list"><span>메모</span>
+								<textarea name="" id="" cols="76" rows="8">올댓페이입니다.</textarea></li>
+
+								<div class="text-center mt-3"><button
+									type="button" class="btn btn-save">저장</button></div>
+						</ul>
+		
+						<ul class="ml-4 pl-4" style="border-left: 1px dashed #ddd;">
+		
+							<div class="pop-total mt-3">
+								<li class="pop-list"><span>판매총액 (2022년)</span><input type="text" disabled class="form-control  mr-3"
+										value="3,811,500,000원"></li>
+								<li class="pop-list"><span>판매횟수 (2022년)</span><input type="text" disabled class="form-control"
+										value="43,250건"></li>
+								<li class="pop-list"><span>판매평균 (일)</span><input type="text" disabled class="form-control mr-3"
+										value="1,143,250원"></li>
+								<li class="pop-list"><span>판매횟수 (평균)</span><input type="text" disabled class="form-control"
+										value="43,250건"></li>
+							</div>
+		
+							<li class="pop-list d-flex justify-content-start align-items-center mt-2"><span
+									style="min-width: 7.5rem;">판매내역</span><input type="text" style="width: 7.5rem;" id="date1"
+									class="date1 calendar calendar-img mr-2"> ~ &nbsp; <input type="text" style="width: 7.5rem;" id="date2"
+									class="date2 calendar calendar-img mr-2"><button type="button" class="btn btn-search"><i
+										class="fa-solid fa-magnifying-glass mr-1"></i>검색</button></li>
+		
+							<div class="table-responsive t2 mt-2">
+								<table class="table table-hover table-striped text-center mb-0">
+									<thead>
+										<tr>
+											<th>판매일자</th>
+											<th>판매금액</th>
+											<th>증감률(D-1)</th>
+											<th>판매횟수</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>2022-09-12</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-down-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-11</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-down-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-10</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-09</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-08</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-07</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-06</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-05</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-04</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-03</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-02</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-up-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+										<tr>
+											<td>2022-09-01</td>
+											<td>1,000,000원</td>
+											<td>7%<i class="fa-solid fa-down-long ml-1"></i></td>
+											<td>100건</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</ul>
+					</div>
+				</div><!-- content -->
+			</article>
+
+			<footer class="d-flex justify-content-between align-items-center p-3">
+				<div>2022 © ALLTHATPAY.</div>
+				<div>대표번호 1811 - 6277</div>
+			</footer><!-- footer -->
+
+		</div><!-- section -->
+	</div><!-- wrapper -->
+
+	
+	<div class="top-wrap">
+		<div class="bt-top"><i class="fa fa-angle-up"></i></div>
+	</div><!-- top-wrap -->
+
+	<a href="https://www.whelper.co.kr/allthat" target='_blank'>
+		<div class="whelper-wrap">
+			<div class="whelper"><i class="fa-solid fa-wifi"></i>
+				<div>원격지원</div>
+			</div>
+		</div>
+	</a>
+	<script src="../js/common.js"></script>
+	<script src="../js/franchise.js"></script>
+</body>
+</html>

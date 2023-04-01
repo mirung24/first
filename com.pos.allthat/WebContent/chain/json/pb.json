@@ -1,0 +1,20 @@
+{
+	"data": [
+	{"no": "1", "groupname": "SC001", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "2", "groupname": "SC002", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "3", "groupname": "SC003", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "4", "groupname": "SC004", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "5", "groupname": "SC005", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "6", "groupname": "SC006", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "7", "groupname": "SC007", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "8", "groupname": "SC008", "price": "변동", "vigo": "", "use": "사용안함"},
+	{"no": "9", "groupname": "SC009", "price": "변동", "vigo": "PB상품입니다.", "use": "사용"},
+	{"no": "10", "groupname": "SC0010", "price": "변동", "vigo": "", "use": "사용"},
+	{"no": "11", "groupname": "SC0011", "price": "변동", "vigo": "", "use": "사용"},
+	{"no": "12", "groupname": "SC0012", "price": "변동", "vigo": "", "use": "사용"},
+	{"no": "13", "groupname": "SC0013", "price": "변동", "vigo": "", "use": "사용"},
+	{"no": "14", "groupname": "SC0014", "price": "변동", "vigo": "", "use": "사용"},
+	{"no": "15", "groupname": "SC0015", "price": "변동", "vigo": "", "use": "사용"},
+	{"no": "16", "groupname": "SC0016", "price": "변동", "vigo": "", "use": "사용"}
+	]
+}

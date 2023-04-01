@@ -1,0 +1,6 @@
+.box-wrap > div:nth-child(1) {flex: 50% 0 0;}
+.box-wrap > div:nth-child(2) {flex: 50% 0 1; display: none;}
+
+/*.table text-align */
+.box .table tr th:nth-child(3), .box .table tr td:nth-child(3) {text-align: left !important;}
+.box .table tr th:nth-child(4), .box .table tr td:nth-child(4) {text-align: left !important;}

@@ -1,0 +1,9 @@
+input[type="text"]:focus, textarea[type="cont"]:focus {box-shadow: none; border-color: #ced4da;}
+
+/* file */
+.file-input{display:none;}
+.img-plus {display:inline-block; color:#ffffff; padding: 0.3rem 0.4rem; cursor:pointer; margin-bottom: 0; min-width: 4.7rem; background-color: #607cd6; font-size: 0.8rem;}
+.img-plus i {color: #adbcee; font-size: 1.1rem;}
+.img-plus:hover {color: #fff; background-color: #718de7;}
+.img-plus:after {content:"파일 추가";}
+.filename3 {width: 25rem !important; border-radius: 0;}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+
+	<!-- 로그인 시 계정 여부 확인(체인점) -->
+	<select id="acctChk" parameterType="vo.ChainUserVO" resultType="int"> 
+		select count(*) from pos_chainuser pc
+		inner join pos_chaininfo pc2 
+      	on pc.chaincd = pc2.chaincode 
+   		where pc.userid=#{userid} and pc.passwd=#{passwd} and pc.useyn ='Y'
+	</select>
+	
+	<!-- 로그인 시 계정 여부 확인(가맹점) -->
+	<select id="SacctChk" parameterType="vo.CompanyUserVO" resultType="int"> 
+		   select count(*)
+		   from pos_company pc 
+		   inner join pos_companyuser pu
+		      on pc.compcd = pu.compcd
+		   left outer join pos_chaincompany pc2 
+		      on pc.compcd = pc2.compcd
+		   where pu.userid =#{userid} and pu.passwd =#{passwd} and pu.useyn ='Y'
+	</select>
+	
+	<!-- 로그인 처리(체인점) -->
+	<select id="login" resultType="vo.ChainUserVO">
+		select pc.chaincd ,pc2.chainname ,pc.userseq ,pc.userid ,pc.name 
+   		from pos_chainuser pc 
+   		inner join pos_chaininfo pc2 
+      	on pc.chaincd = pc2.chaincode 
+  		where pc.userid=#{userid} and pc.passwd=#{passwd} and pc.useyn='Y'
+	</select>
+	
+	<!-- 로그인 처리(가맹점) -->
+	<select id="slogin" resultType="vo.CompanyUserVO">
+		select
+			pc2.chaincode as chaincd ,
+			pc2.compcd as compcd ,
+			pu.userseq ,
+			pu.userid ,
+			pu.name,
+			pc.companyname,
+			pc.corporatenumber,
+			pc.business ,
+			pc.sectors,
+			pc.president ,
+			pc.email,
+			pc.tel ,
+			concat(pc.address, ' ', pc.address2) as addr,
+			pc.manager
+		from
+			pos_company pc
+		inner join pos_companyuser pu
+			      on
+			pc.compcd = pu.compcd
+		left outer join pos_chaincompany pc2 
+			      on
+			pc.compcd = pc2.compcd
+		where
+			pu.userid = #{userid}
+			and pu.passwd = #{passwd}
+			and pu.useyn = 'Y'
+	</select>
+	
+	<!-- 로그인 히스토리 처리 -->
+	<insert id="loghist" parameterType="vo.ChainUserVO">
+		insert into posuser_loghist values(
+								now(),
+								#{userid},
+								#{ip}
+		)
+	</insert>
+	
+	<!-- 쿠키에 있는 id로 uservo 가져오기(체인점)  -->
+	<select id="chk_sessionKey" parameterType="String" resultType="vo.ChainUserVO">
+		select pc.chaincd ,pc2.chainname ,pc.userseq ,pc.userid ,pc.name 
+   		from pos_chainuser pc 
+   		inner join pos_chaininfo pc2 
+      	on pc.chaincd = pc2.chaincode 
+  		where pc.userid=#{sessionId} and pc.useyn='Y'
+	</select>
+	
+	<!-- 쿠키에 있는 id로 uservo 가져오기(가맹점)  -->
+	<select id="chk_sessionKey2" parameterType="String" resultType="vo.CompanyUserVO">
+		select
+			pc2.chaincode as chaincd ,
+			pc2.compcd as compcd ,
+			pu.userseq ,
+			pu.userid ,
+			pu.name,
+			pc.companyname,
+			pc.corporatenumber,
+			pc.business ,
+			pc.sectors,
+			pc.president ,
+			pc.email,
+			pc.tel ,
+			concat(pc.address, ' ', pc.address2) as addr,
+			pc.manager
+		from
+			pos_company pc
+		inner join pos_companyuser pu
+			      on
+			pc.compcd = pu.compcd
+		left outer join pos_chaincompany pc2 
+			      on
+			pc.compcd = pc2.compcd
+		where
+			pu.userid = #{sessionId}
+			and pu.useyn = 'Y'
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssell">
+	
+	<!-- 판매관리 리스트 조회 -->
+	<select id="sell_list" parameterType="vo.newvo.SellListVO" resultType="vo.newvo.SellListVO">
+		select dd1.*
+		from(
+		   select FLOOR((@rownum + 1 - 1)/ #{pagecnt} + 1) page, replace(FORMAT(@rownum := @rownum+1,0),',','') as no, dat2.*
+		   from (
+		      select 
+		          auth_date, auth_time ,
+		          tid ,
+		          codename1 ,
+		          auth_no ,
+		          installments,
+		          codename2,
+		          total ,
+		          etcamt ,
+		          amt , 
+		          vat ,
+		          discount ,
+		          productnames ,
+		          salesman,
+		          name ,
+		          paymentcd ,
+		          paygubn,
+		          paymethod,
+          		  cardgubn
+		      from (
+			      select 
+			            DATE_FORMAT(concat(pp.auth_date, pp.auth_time), '%y-%m-%d %H:%i:%s') as auth_date,
+			            concat(substr(pp.auth_time,1,2),':',substr(pp.auth_time,3,2),':',substr(pp.auth_time,5,2)) as auth_time ,
+			            pp.tid ,
+			            pd.nickname as codename1 ,
+			            pp.auth_no ,
+			            case when pp.installments ='0' then '일시불' else pp.installments end installments,
+			            pd2.codename as codename2,
+			            pp.total ,
+			            pp.etcamt ,
+			            pp.amt , 
+			            pp.vat ,
+			            pp.discount ,
+			            pp.productnames ,
+			            pc3.name  as salesman,
+			            pp.name as name ,
+			            pp.paymentcd ,
+			            pp.paygubn,
+			            pp.paymethod,
+	            		pp.cardgubn
+			      from 
+			          ( 
+			          select compcd,hp,paygubn,cardgubn,vancd,paymethod,salesid,auth_date,auth_time,tid,auth_no,installments,total,etcamt,amt,vat,discount,productnames,name,paymentcd
+			         from pos_payment_temp 
+			         where compcd=#{compcd} and auth_date = date_format(now(),'%Y%m%d')
+			         union all
+			          select compcd,hp,paygubn,cardgubn,vancd,paymethod,salesid,auth_date,auth_time,tid,auth_no,installments,total,etcamt,amt,vat,discount,productnames,name,paymentcd
+			         from pos_payment 
+			         where compcd=#{compcd} and auth_date between #{searchDate1} and #{searchDate2}
+			          )pp
+			         inner join pos_company pc on pp.compcd  = pc.compcd 
+			         left outer join pos_cardlist pd on pp.cardgubn = pd.cardcd and pp.vancd = pd.vancode 
+			         left outer join pos_code pd2 on pp.paymethod = pd2.code 
+			         left outer join pos_companyuser pc3 on pp.salesid = pc3.userid 
+			      where 1=1 
+			           and pp.compcd =#{compcd}
+			           and pp.auth_date between #{searchDate1} and #{searchDate2}
+			           <if test="search1 == 'all'">
+			                  and (concat(ifnull(pp.name,''), ifnull(pp.hp,'')) like concat('%',#{searchInput},'%')
+			               or pp.paymentcd in(
+			                   select ps2.paymentcd from pos_salelist ps2
+			                      inner join pos_compproductgroup pc2 on ps2.productcd = pc2.productcd and ps2.compcd = pc2.compcd 
+			                   where 1=1
+			                      and ps2.compcd = #{compcd}
+			                      and concat(pc2.barcode, pc2.productname) like concat('%',#{searchInput},'%')
+			                   group by ps2.paymentcd
+			                ) or pp.auth_no like concat('%',#{searchInput},'%') )
+			           </if>
+		   	) a
+		   	where 1=1
+		       <if test="search1 == 'name'">
+		              <![CDATA[and a.name like concat('%',#{searchInput},'%')]]>
+		      </if>
+		      <if test="search1 == 'hp'">
+		             <![CDATA[and a.hp like concat('%',#{searchInput},'%')]]>
+		      </if>
+		      <if test="search1 == 'auth_no'">
+		             <![CDATA[and a.auth_no like concat('%',#{searchInput},'%')]]>
+		      </if>
+		      <if test="search1 == 'barcode'">
+		        and a.paymentcd in(
+		           select ps2.paymentcd from pos_salelist ps2
+		              inner join pos_compproductgroup pc2 on ps2.productcd = pc2.productcd and ps2.compcd = pc2.compcd 
+		           where 1=1
+		              and ps2.compcd = #{compcd}
+		              and pc2.barcode like concat('%',#{searchInput},'%')
+		           group by ps2.paymentcd
+		        )         
+		     </if>
+		     <if test="search1 == 'productname'">
+		        and a.paymentcd in(
+		           select ps2.paymentcd from pos_salelist ps2
+		              inner join pos_compproductgroup pc2 on ps2.productcd = pc2.productcd and ps2.compcd = pc2.compcd 
+		           where 1=1
+		              and ps2.compcd = #{compcd}
+		              and pc2.productname like concat('%',#{searchInput},'%')
+		           group by ps2.paymentcd
+		        )   
+		     </if>
+		      <if test="cardcnt > 0">
+		             and cardgubn in 
+		             <foreach item="item" index="index" collection="cardArr1" open="(" separator="," close=")">
+		                #{item,jdbcType=VARCHAR}
+		             </foreach>
+		      </if>
+		      <if test="paygubn == 'ACC'">
+		             <![CDATA[and a.paygubn = #{paygubn}]]>
+		      </if>
+		      <if test="paygubn == 'CAN'">
+		             <![CDATA[and a.paygubn = #{paygubn}]]>
+		      </if>
+		      <if test="paymethod == 'CARD'">
+		             <![CDATA[and a.paymethod in ('D1','D4','AB','AC','J1','J4','A1','A2','A3','A4','A5','A6','A7','A8')]]>
+		      </if>
+		      <if test="paymethod == 'CMONEY'">
+		             <![CDATA[and a.paymethod in ('B1','B2','B3','B4')]]>
+		      </if>
+		      <if test="paymethod == 'MONEY'">
+		             <![CDATA[and a.paymethod in ('Q1','Q2')]]>
+		       </if>
+		   order by auth_date desc, auth_time desc
+		   )dat2, (select @rownum := 0 ) r
+		)dd1
+		where page=#{pageno}
+		order by auth_date desc ,auth_time desc 
+	</select>
+	
+	<!-- 판매 건수조회 -->
+	<select id="sell_count" parameterType="vo.newvo.SellListVO" resultType="vo.newvo.SellListVO">
+		select 
+			count(paymentcd) as cnt,
+			sum(case when paygubn='ACC' then amt when paygubn='CAN' then 0-ifnull(amt,0) else 0 end) as tamt, 
+			sum(case when paygubn='ACC' then vat when paygubn='CAN' then 0-ifnull(vat,0) else 0 end) as tvat, 
+			sum(case when paygubn='ACC' then discount when paygubn='CAN' then 0-ifnull(discount,0) else 0 end) as tdiscount,
+			sum(case when paygubn='ACC' then etcamt when paygubn='CAN' then 0-ifnull(etcamt,0) else 0 end) as tetcamt, 
+			sum(case when paygubn='ACC' then total when paygubn='CAN' then 0-ifnull(total,0) else 0 end) as ttotal
+			from(
+			      select 
+			            DATE_FORMAT(concat(pp.auth_date, pp.auth_time), '%y-%m-%d %H:%i:%s') as auth_date,
+			            concat(substr(pp.auth_time,1,2),':',substr(pp.auth_time,3,2),':',substr(pp.auth_time,5,2)) as auth_time ,
+			            pp.tid ,
+			            pd.nickname as codename1 ,
+			            pp.auth_no ,
+			            case when pp.installments ='0' then '일시불' else pp.installments end installments,
+			            pd2.codename as codename2,
+			            pp.total ,
+			            pp.etcamt ,
+			            pp.amt , 
+			            pp.vat ,
+			            pp.discount ,
+			            pp.productnames ,
+			            pc3.name  as salesman,
+			            pp.name as name ,
+			            pp.paymentcd ,
+			            pp.paygubn,
+			            pp.paymethod,
+	            		pp.cardgubn
+			      from 
+			          ( 
+			          select compcd,hp,paygubn,cardgubn,vancd,paymethod,salesid,auth_date,auth_time,tid,auth_no,installments,total,etcamt,amt,vat,discount,productnames,name,paymentcd
+			         from pos_payment_temp 
+			         where compcd=#{compcd} and auth_date = date_format(now(),'%Y%m%d')
+			         union all
+			          select compcd,hp,paygubn,cardgubn,vancd,paymethod,salesid,auth_date,auth_time,tid,auth_no,installments,total,etcamt,amt,vat,discount,productnames,name,paymentcd
+			         from pos_payment 
+			         where compcd=#{compcd} and auth_date between #{searchDate1} and #{searchDate2}
+			          )pp
+			         inner join pos_company pc on pp.compcd  = pc.compcd 
+			         left outer join pos_cardlist pd on pp.cardgubn = pd.cardcd and pp.vancd = pd.vancode 
+			         left outer join pos_code pd2 on pp.paymethod = pd2.code 
+			         left outer join pos_companyuser pc3 on pp.salesid = pc3.userid 
+			      where 1=1 
+			           and pp.compcd =#{compcd}
+			           and pp.auth_date between #{searchDate1} and #{searchDate2}
+			           <if test="search1 == 'all'">
+			                  and (concat(ifnull(pp.name,''), ifnull(pp.hp,'')) like concat('%',#{searchInput},'%')
+			               or pp.paymentcd in(
+			                   select ps2.paymentcd from pos_salelist ps2
+			                      inner join pos_compproductgroup pc2 on ps2.productcd = pc2.productcd and ps2.compcd = pc2.compcd 
+			                   where 1=1
+			                      and ps2.compcd = #{compcd}
+			                      and concat(pc2.barcode, pc2.productname) like concat('%',#{searchInput},'%')
+			                   group by ps2.paymentcd
+			                ) or pp.auth_no like concat('%',#{searchInput},'%') )
+			           </if>
+		   	) a
+		   	where 1=1
+		       <if test="search1 == 'name'">
+		              <![CDATA[and a.name like concat('%',#{searchInput},'%')]]>
+		      </if>
+		      <if test="search1 == 'hp'">
+		             <![CDATA[and a.hp like concat('%',#{searchInput},'%')]]>
+		      </if>
+		      <if test="search1 == 'auth_no'">
+		             <![CDATA[and a.auth_no like concat('%',#{searchInput},'%')]]>
+		      </if>
+		      <if test="search1 == 'barcode'">
+		        and a.paymentcd in(
+		           select ps2.paymentcd from pos_salelist ps2
+		              inner join pos_compproductgroup pc2 on ps2.productcd = pc2.productcd and ps2.compcd = pc2.compcd 
+		           where 1=1
+		              and ps2.compcd = #{compcd}
+		              and pc2.barcode like concat('%',#{searchInput},'%')
+		           group by ps2.paymentcd
+		        )         
+		     </if>
+		     <if test="search1 == 'productname'">
+		        and a.paymentcd in(
+		           select ps2.paymentcd from pos_salelist ps2
+		              inner join pos_compproductgroup pc2 on ps2.productcd = pc2.productcd and ps2.compcd = pc2.compcd 
+		           where 1=1
+		              and ps2.compcd = #{compcd}
+		              and pc2.productname like concat('%',#{searchInput},'%')
+		           group by ps2.paymentcd
+		        )   
+		     </if>
+		      <if test="cardcnt > 0">
+		             and cardgubn in 
+		             <foreach item="item" index="index" collection="cardArr1" open="(" separator="," close=")">
+		                #{item,jdbcType=VARCHAR}
+		             </foreach>
+		      </if>
+		      <if test="paygubn == 'ACC'">
+		             <![CDATA[and a.paygubn = #{paygubn}]]>
+		      </if>
+		      <if test="paygubn == 'CAN'">
+		             <![CDATA[and a.paygubn = #{paygubn}]]>
+		      </if>
+		      <if test="paymethod == 'CARD'">
+		             <![CDATA[and a.paymethod in ('D1','D4','AB','AC','J1','J4','A1','A2','A3','A4','A5','A6','A7','A8')]]>
+		      </if>
+		      <if test="paymethod == 'CMONEY'">
+		             <![CDATA[and a.paymethod in ('B1','B2','B3','B4')]]>
+		      </if>
+		      <if test="paymethod == 'MONEY'">
+		             <![CDATA[and a.paymethod in ('Q1','Q2')]]>
+		       </if>
+	</select>
+	
+	<!-- 선택한 상품 정보 리스트 조회 -->
+	<select id="sell_list2" parameterType="vo.newvo.SellList2VO" resultType="vo.newvo.SellList2VO">
+		select replace(FORMAT(@rownum := @rownum+1,0),',','') as no, dat2.*
+		from(
+			SELECT
+				ps.productcd ,
+				pc.barcode ,
+				pc.productname ,
+				pc.maker ,
+				pc.unit ,
+				pc.`size` ,
+				pc.spec ,
+				pc.packingunit ,
+				ps.price ,
+				ps.cnt ,
+				ps.discount ,
+				ps.total ,
+				pc2.stock as stock
+			from
+		      pos_salelist ps
+		   inner join pos_compproductgroup pc on
+		      ps.compcd = pc.compcd and ps.productcd = pc.productcd
+		   left outer join pos_compstock pc2 on
+		      pc.compcd = pc2.compcd and pc.productid = pc2.productid
+		   where
+		      paymentcd = #{paymentcd} and ps.compcd= #{compcd}
+		)dat2, (select @rownum := 0 ) r
+	</select>
+
+</mapper>

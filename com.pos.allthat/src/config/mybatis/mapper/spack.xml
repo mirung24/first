@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spack">
+	
+	<!-- 상품포장관리 리스트 조회 -->
+	<select id="spack_list" parameterType="vo.shopvo.SProdListVO" resultType="vo.shopvo.SProdListVO">
+		SELECT dd1.*
+         from(
+             select FLOOR((@rownum + 1 - 1)/ #{pagecnt} + 1) page,replace(FORMAT(@rownum := @rownum + 1,0),',','') as no,list.*
+            from(
+               SELECT productname ,productid, productcd,
+                      packingunit,
+                      maker ,spec ,size,
+                      mxprice,
+                      miprice,
+                      maprice,
+                      total,
+                      total2,
+                      total3,
+                      case when total3=0 then '-' else 
+                      case when @pv = ifnull(total3,0) then @vrank
+                                  when @pv := ifnull(total3,0) then @vrank := @vrank+1
+                                  end
+                      end as ranking
+             from(
+                select  pc.productname ,
+                      pc.productid ,
+                      pc.productcd ,
+                      min(pc.packingunit) as packingunit,
+                     min(pc.maker) as maker,
+                     min(pc.spec) as spec,
+                     min(pc.`size`) as `size`,
+                     min(mm2.mxprice) as mxprice,
+                     min(mm2.miprice) as miprice,
+                     min(mm2.maprice) as maprice,
+                     min(ifnull(total,0)) as total,
+                     min(ifnull(total2,0)) as total2,
+                     min(ifnull(total3,0)) as total3
+                from pos_compproductgroup pc
+                   left outer join(
+                      select productid,productcd
+                      from pos_salelist
+                      where compcd=#{compcd} and salesday between #{searchDate1} and #{searchDate2}  group by productid,productcd
+                   ) st
+                    on pc.compcd=#{compcd} and pc.productid= st.productid and pc.productcd = st.productcd
+                    left outer join 
+                    (
+                           SELECT productid,productcd,sum(total) as total,sum(total2) as total2,sum(total3) as total3
+                            from(
+                                  select pc.productid,pc.productcd,
+                                  sum(case when ps.salesday = date_format(now(),'%Y%m%d') then ps.total else 0 end) as total,
+                                  sum(case when ps.salesday = date_format(adddate(now(),-1),'%Y%m%d') then ps.total else 0 end) as total2,
+                                  sum(case when ps.salesday between  date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d') then ps.total else 0 end) as total3
+                                  from pos_salelist ps 
+                                     inner join pos_compproductgroup pc 
+                                        on ps.compcd = pc.compcd and ps.productcd = pc.productcd 
+                                      inner join pos_compproduct pc4 
+                                         on pc.compcd = pc4.compcd and pc.productid = pc4.productid
+                                     inner join pos_company pc2 
+                                        on ps.compcd = pc2.compcd
+                                     inner join pos_chaincompany pc3 
+                                        on pc2.compcd = pc3.compcd 
+                                  where 1=1 and ps.compcd=#{compcd} and ps.salesday 
+                                  between date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d')
+                          		  group by pc.productid,pc.productcd
+                            ) sal      
+                            group by productid,productcd
+                     )mm on pc.productid = mm.productid and pc.productcd = mm.productcd
+           left outer join(
+                     select barcode,SUBSTRING_INDEX(group_concat(cast(salesprice as decimal) order by pcnt DESC), ',', 1) AS maprice,min(cast(salesprice as decimal)) as miprice,max(cast(salesprice as decimal)) as mxprice
+                     from (
+                        select barcode,ifnull(salesprice,0) as salesprice,count(*) as pcnt
+                        from pos_compproductgroup
+                        where salesprice>0 and salesdate >= date_format(date_sub(now(), interval 1 month),'%Y%m%d')
+                        GROUP BY barcode,ifnull(salesprice,0)
+                     )pdate
+                     group by barcode
+           )mm2
+                     on pc.barcode = mm2.barcode
+                  where pc.compcd =#{compcd} 
+                  <if test="search2 == 'salesdate'">
+                    and st.productid is not null
+                 </if>
+       group by pc.productname ,
+                     pc.productid ,
+                     pc.productcd
+                  order by total3 desc
+               ) dd ,(SELECT @vrank := 0, @pv := null) as r
+               where 1=1
+               <if test="search1 == 'all'">
+                  <![CDATA[and concat(productname,productid, maker) like concat('%',#{searchInput},'%')]]>
+              </if>
+              <if test="search1 == 'productname'">
+                  and dd.productname like concat('%',#{searchInput},'%')
+                </if>
+                <if test="search1 == 'productid'">
+                  <![CDATA[and dd.productid like concat('%',#{searchInput},'%')]]>
+                </if>
+                <if test="search1 == 'maker'">
+                  <![CDATA[and dd.maker like concat('%',#{searchInput},'%')]]>
+              </if>
+            )list, (select @rownum := 0) r
+         ) dd1
+         where page=#{pageno}
+         order by productname
+	</select>
+	
+	<!-- 상품포장관리 조회 건수 -->
+	<select id="count" parameterType="vo.shopvo.SProdListVO" resultType="int">
+		   select count(*)
+             from(
+                select  pc.productname ,
+                      pc.productid ,
+                      pc.productcd ,
+                      min(pc.packingunit) as packingunit,
+                     min(pc.maker) as maker,
+                     min(pc.spec) as spec,
+                     min(pc.`size`) as `size`,
+                     min(mm2.mxprice) as mxprice,
+                     min(mm2.miprice) as miprice,
+                     min(mm2.maprice) as maprice,
+                     min(ifnull(total,0)) as total,
+                     min(ifnull(total2,0)) as total2,
+                     min(ifnull(total3,0)) as total3
+                from pos_compproductgroup pc
+                   left outer join(
+                      select productid,productcd
+                      from pos_salelist
+                      where compcd=#{compcd} and salesday between #{searchDate1} and #{searchDate2}  group by productid,productcd
+                   ) st
+                    on pc.compcd=#{compcd} and pc.productid= st.productid and pc.productcd = st.productcd
+                    left outer join 
+                    (
+                           SELECT productid,productcd,sum(total) as total,sum(total2) as total2,sum(total3) as total3
+                            from(
+                                  select pc.productid,pc.productcd,
+                                  sum(case when ps.salesday = date_format(now(),'%Y%m%d') then ps.total else 0 end) as total,
+                                  sum(case when ps.salesday = date_format(adddate(now(),-1),'%Y%m%d') then ps.total else 0 end) as total2,
+                                  sum(case when ps.salesday between  date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d') then ps.total else 0 end) as total3
+                                  from pos_salelist ps 
+                                     inner join pos_compproductgroup pc 
+                                        on ps.compcd = pc.compcd and ps.productcd = pc.productcd 
+                                      inner join pos_compproduct pc4 
+                                         on pc.compcd = pc4.compcd and pc.productid = pc4.productid
+                                     inner join pos_company pc2 
+                                        on ps.compcd = pc2.compcd
+                                     inner join pos_chaincompany pc3 
+                                        on pc2.compcd = pc3.compcd 
+                                  where 1=1 and ps.compcd=#{compcd} and ps.salesday 
+                                  between date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d')
+                          		  group by pc.productid,pc.productcd
+                            ) sal      
+                            group by productid,productcd
+                     )mm on pc.productid = mm.productid and pc.productcd = mm.productcd
+           			left outer join(
+                     	select barcode,SUBSTRING_INDEX(group_concat(salesprice order by pcnt DESC), ',', 1) AS maprice,min(salesprice) as miprice,max(salesprice) as mxprice
+                     	from (
+                        select barcode,ifnull(salesprice,0) as salesprice,count(*) as pcnt
+                        from pos_compproductgroup
+                        where salesprice>0 and salesdate >= date_format(date_sub(now(), interval 1 month),'%Y%m%d')
+                        GROUP BY barcode,ifnull(salesprice,0)
+                     )pdate
+                     group by barcode
+           )mm2
+                     on pc.barcode = mm2.barcode
+                  where pc.compcd =#{compcd} 
+                  <if test="search2 == 'salesdate'">
+                    and st.productid is not null
+                 </if>
+       			group by pc.productname ,
+                     pc.productid ,
+                     pc.productcd
+                  order by total3 desc
+               ) dd ,(SELECT @vrank := 0, @pv := null) as r
+               where 1=1
+               <if test="search1 == 'all'">
+                  <![CDATA[and concat(productname,productid, maker) like concat('%',#{searchInput},'%')]]>
+              </if>
+              <if test="search1 == 'productname'">
+                  and dd.productname like concat('%',#{searchInput},'%')
+                </if>
+                <if test="search1 == 'productid'">
+                  <![CDATA[and dd.productid like concat('%',#{searchInput},'%')]]>
+                </if>
+                <if test="search1 == 'maker'">
+                  <![CDATA[and dd.maker like concat('%',#{searchInput},'%')]]>
+              </if>
+	</select>
+	
+	<!-- 그룹상품 추가 리스트 -->
+	<select id="spack_ga" parameterType="vo.shopvo.SProdListVO" resultType="vo.shopvo.SProdListVO">
+		select 
+			pc.productid ,
+		    pc.productcd ,
+		    pc.barcode ,
+		    pc.productname ,
+		    pc.maker ,
+		    pc.spec ,
+		    pc.unit ,
+		    pc.size ,
+		    pc.packingunit ,
+		    pc.price,
+		    pc.discount,
+		    pc.salesprice,
+		    pc.productsid,
+		    pd.maprice,
+		    pd.miprice,
+		    pd.mxprice
+		from pos_compproductgroup pc 
+		left outer join(
+			select productcd, 
+				SUBSTRING_INDEX(group_concat(salesprice order by pcnt DESC), ',', 1) AS maprice,
+				min(salesprice) as miprice,
+				max(salesprice) as mxprice 
+			from ( 
+				select productcd, ifnull(cast(salesprice as decimal),0) as salesprice, count(*) as pcnt 
+		        from pos_compproductgroup 
+		        where PRODUCTCD IN( 
+					select productcd from pos_compproductgroup  
+		            where salesprice>0 and salesdate >= date_format(date_sub(now(), interval 1 month),'%Y%m%d') 
+		        ) 
+		        GROUP BY PRODUCTCD,ifnull(cast(salesprice as decimal),0) 
+			) pdate 
+		    group by productcd 
+		) pd 
+		on pc.productcd = pd.productcd
+		where compcd =#{compcd} and productid=#{productid}
+	</select>
+	
+	<!-- 그룹상품 리스트 바코드 가져오기 -->
+	<select id="spack_barcode" parameterType="vo.shopvo.SProdListVO" resultType="vo.shopvo.SProdListVO">
+		select productcd, 
+			SUBSTRING_INDEX(group_concat(salesprice order by pcnt DESC), ',', 1) AS maprice,
+			min(salesprice) as miprice,
+			max(salesprice) as mxprice 
+		from ( 
+			select productcd,ifnull(cast(salesprice as decimal),0) as salesprice,count(*) as pcnt 
+		    from pos_compproductgroup 
+		    where PRODUCTCD IN( 
+		    	select productcd from pos_compproductgroup  
+		        where barcode=#{barcode} and salesprice>0 and salesdate >= date_format(date_sub(now(), interval 1 month),'%Y%m%d') 
+		    ) 
+		    GROUP BY PRODUCTCD,ifnull(cast(salesprice as decimal),0) 
+		) pdate 
+		group by productcd
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

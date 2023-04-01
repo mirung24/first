@@ -1,0 +1,44 @@
+/* square-wrap */
+.square-wrap {flex: 33.3333%; margin: 1rem 0; padding: 0 2rem; position: relative;}
+.square-wrap:not(:last-child) {border-right: 2px dashed #ddd;}
+.circle {width: 20px; height: 20px; background-color: #f3f3f9; border-radius: 50%; position: absolute; right: -0.7rem;}
+.icon-wrap {width: 3rem; height: 3rem; display: table;  border-radius: 50%;}
+.icon-wrap i {font-size: 1.2rem; display: table-cell; text-align: center; vertical-align: middle;}
+.square-title {font-family: 'Happiness-Sans-Bold'; color: #6c757d; font-size: 1rem; font-weight: bold; margin-top: 0.8rem; margin-bottom: 0.2rem;}
+.square-price {font-family: 'Cafe24Ssurround'; color: #344256; font-size: 1.3rem; font-weight: bold;}
+.square-price span {margin-left: 0.2rem;}
+.square-total {color: #8c8c8c; font-size: 1rem;}
+.square-wrap:nth-child(1) .icon-wrap {background-color: #fce9e9;}
+.square-wrap:nth-child(1) i {color: #e52727;}
+.square-wrap:nth-child(1) .square-price span {color: #e52727;}
+.square-wrap:nth-child(2) .icon-wrap {background-color: #fdecce;}
+.square-wrap:nth-child(2) i {color: #f59e0c;}
+.square-wrap:nth-child(2) .square-price span {color: #f59e0c;}
+.square-wrap:nth-child(3) .icon-wrap {background-color: #d2d9ef;}
+.square-wrap:nth-child(3) i {color: #1f41af;}
+.square-wrap:nth-child(3) .square-price span {color: #1f41af;}
+.circle-top {top: -1.5rem; border-bottom: 3px solid #eee;}
+.circle-bottom {bottom: -1.5rem; border-top: 3px solid #eee;}
+
+.box-wrap > div:nth-child(1) {flex: 55% 0 0;}
+.box-wrap > div:nth-child(2) {flex: 45% 0 1; display: none;}
+
+.table .table-post tr td {padding: 0.3rem !important;}
+
+/*.table text-align */
+.box .table tr th:nth-child(3), .box .table tr td:nth-child(3) {text-align: left !important;}
+.box .table tr th:nth-child(6), .box .table tr td:nth-child(6) {text-align: right !important;}
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(4), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(4) {text-align: left !important;}
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(6), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(6) {text-align: center !important;}
+.box.tab-wrap > div:nth-child(1) .table tr th:nth-child(8), .box.tab-wrap div:nth-child(1) .table tr td:nth-child(8) {text-align: right !important;}
+.pop1 .table tr th:nth-child(3), .pop1 .table tr td:nth-child(3) {text-align: left !important;}
+.pop1 .table tr th:nth-child(4), .pop1 .table tr td:nth-child(4) {text-align: left !important;}
+.pop1 .table tr th:nth-child(8), .pop1 .table tr td:nth-child(8) {text-align: right !important;}
+.pop1 .table tr th:nth-child(9), .pop1 .table tr td:nth-child(9) {text-align: right !important;}
+
+/* 발주서 */
+.page {background-color: #fff; width: 29.7cm; min-height: 21cm; padding: 1.5rem;}
+.pop1 .table-responsive {border-radius: 0 !important;}
+.pop1 .table tr th, .pop1 .table tr td {padding: 0.35rem 0.5rem !important;}
+.table-print tr td:nth-child(1), .table-print tr td:nth-child(3), .table-print tr td:nth-child(5), .pop1 .table tr th {background-color: #d6dfee; font-weight: bold;}
+.pop1 .table-bordered td, .table-bordered th {border: 1px solid #a8b2bd;}

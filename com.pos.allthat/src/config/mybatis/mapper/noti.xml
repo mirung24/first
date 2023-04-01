@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="noti">
+	
+	<!-- 공지사항 리스트 조회 -->
+	<select id="noti_list" parameterType="vo.NoticeVO" resultType="vo.NoticeVO">
+		select dd.*
+		from(
+			select FLOOR((@rownum + 1 - 1)/ #{pagecnt} + 1) page, replace(FORMAT(@rownum := @rownum + 1, 0),',','') as no, list.*
+			from(
+				select
+					noticecode,
+					title,
+					category,
+					regcd,
+					regdt,
+					readhit
+				from pos_chainnotice pc
+				where 1=1 
+				and chaincode = #{chaincode}
+				<if test="search1 == 'all'">
+					and concat(pc.title, pc.regcd) like concat('%',#{searchInput},'%')
+				</if>
+				<if test="search1 == 'title'">
+					and pc.title like concat('%',#{searchInput},'%')
+				</if>
+				<if test="search1 == 'author'">
+					and pc.regcd like concat('%',#{searchInput},'%')
+				</if>
+				and pc.regdt BETWEEN concat(#{searchDate1},'000000') and concat(#{searchDate2},'235959')
+			)list, (select @rownum :=0) r
+			order by category asc, regdt desc
+		)dd
+		where page=#{pageno}
+	</select>
+	
+	<!-- 공지사항 건수 조회 -->
+	<select id="count" parameterType="vo.NoticeVO" resultType="int">
+		select count(*)
+		from pos_chainnotice pc
+		where 1=1 
+		and chaincode = #{chaincode}
+		<if test="search1 == 'all'">
+			and concat(title,regcd) like concat('%',#{searchInput},'%')
+		</if>
+		<if test="search1 == 'title'">
+			and pc.title like concat('%',#{searchInput},'%')
+		</if>
+		<if test="search1 == 'author'">
+			and pc.regcd like concat('%',#{searchInput},'%')
+		</if>
+		and pc.regdt BETWEEN concat(#{searchDate1},'000000') and concat(#{searchDate2},'235959')
+	</select>
+	
+	<!-- 가맹점 리스트 조회 -->
+	<select id="comp_list" parameterType="vo.NoticeVO" resultType="vo.NoticeVO">
+		select
+			pc.compcd, 
+			pc.companyname, 
+			pc.corporatenumber, 
+			concat(pc.address,' ', pc.address2) as addr
+		from pos_company pc 
+		inner join pos_chaincompany pc2 on pc.compcd = pc2.compcd
+		where pc2.chaincode = #{chaincode}
+	</select>
+	
+	<!-- 공지코드 만들기 -->
+	<select id="make_noticd" resultType="String">
+		select fn_barcode('NOC') as noticecode
+	</select>
+	
+	<!-- 공지사항 저장1(pos_chainnotice) -->
+	<select id="noti_insert1" parameterType="vo.NoticeVO" resultType="int">
+		insert into pos_chainnotice (
+			noticecode,
+			chaincode,
+			title,
+			content,
+			category,
+			regcd,
+			regdt,
+			upddt,
+			readhit
+		) values (
+			#{noticecode},
+			#{chaincode},
+			#{title},
+			#{content},
+			#{category},
+			#{regcd},
+			now(),
+			null,
+			0
+		)on duplicate KEY update
+			title = #{title},
+			content = #{content},
+			category = #{category},
+			regcd = #{regcd},
+			upddt = now()
+	</select>
+	
+	<!-- 공지코드 가져오기 -->
+	<select id="sel_noticd" parameterType="vo.NoticeVO" resultType="String">
+		select noticecode from pos_chainnotice pc 
+		where pc.chaincode = #{chaincode}
+		and pc.title = #{title}
+		and pc.content = #{content}
+		and pc.category = #{category}
+		and pc.regcd = #{regcd}
+	</select>
+	
+	<!-- 공지사항 삭제(pos_compnotice) -->
+	<delete id="noti_delete" parameterType="String">
+		delete from pos_compnotice 
+		where noticecode = #{noticecode}
+	</delete>
+	
+	<!-- 공지사항 삭제(pos_chainnotice) -->
+	<delete id="delete" parameterType="String">
+		delete from pos_chainnotice  
+		where noticecode = #{noticecode}
+	</delete>
+	
+	<!-- 공지사항 저장2(pos_compnotice) -->
+	<select id="noti_insert2" parameterType="vo.NoticeVO" resultType="int">
+		insert into pos_compnotice (
+			noticecode,
+			compcd,
+			readyn,
+			readdt
+		) values (
+			#{noticecode},
+			#{compcdArr},
+			'N',
+			null
+		)
+	</select>
+	
+	<!-- 상세보기 정보 가져오기 -->
+	<select id="read_info" parameterType="vo.NoticeVO" resultType="vo.NoticeVO">
+		select chaincode, title, content, category, regcd, regdt, readhit from pos_chainnotice pc 
+		where noticecode = #{noticecode}
+	</select>
+	
+	<!-- 가맹점 수신여부 -->
+	<select id="readyn_list" parameterType="vo.NoticeVO" resultType="vo.NoticeVO">
+		select
+			pc.compcd, 
+			pc.companyname, 
+			pc.corporatenumber, 
+			concat(pc.address,' ', pc.address2) as addr,
+			pc3.readyn,
+			pc3.readdt
+		from pos_company pc 
+		inner join pos_chaincompany pc2 on pc.compcd = pc2.compcd
+		inner join pos_compnotice pc3 on pc.compcd = pc3.compcd 
+		where pc2.chaincode = #{chaincode}
+		and pc3.noticecode =#{noticecode}
+	</select>
+	
+	<!-- 공지사항 수정 : 공지대상 선택했던 리스트 가져오기 -->
+	<select id="target" parameterType="String" resultType="vo.NoticeVO">
+		select compcd from pos_compnotice pc 
+		where pc.noticecode = #{noticecode}
+	</select>
+	
+	<!-- 파일첨부 저장 -->
+	<insert id="insert_file" parameterType="vo.NoticeVO">
+		insert into pos_noticefile (
+			noticecode ,
+			url,
+			filename,
+			regdt ,
+			volume,
+			extension,
+			filecode
+		) values (
+			#{noticecode},
+			#{url},
+			#{filename},
+			now(),
+			#{volume},
+			#{extension},
+			fn_getuuid('FIL')
+		)
+	</insert>
+	
+	<!-- 파일첨부 삭제 -->
+	<delete id="delete_file" parameterType="String">
+		delete from pos_noticefile 
+		where noticecode =#{noticecode}	
+	</delete>
+	
+	<!-- 첨부파일 가져오기 -->
+	<select id="select_file" parameterType="String" resultType="vo.NoticeVO">
+		select url, filename, volume, extension, filecode from pos_noticefile
+		where noticecode = #{noticecode}
+	</select>
+	
+	<!-- 삭제한 첨부파일 삭제(db에 있는 url) -->
+	<delete id="remove_file" parameterType="String">
+		delete from pos_noticefile 
+		where filecode = #{filecode}
+	</delete>
+	
+	<!-- 해당 파일의 url 가져오기(공지사항 삭제할 때) -->
+	<select id="sel_url" parameterType="String" resultType="String">
+		select url from pos_noticefile
+		where noticecode = #{noticecode}
+	</select>
+	
+	<!-- 해당 파일의 url 가져오기(수정할때 삭제하면) -->
+	<select id="sel_url2" parameterType="String" resultType="String">
+		select url from pos_noticefile
+		where filecode = #{filecode}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

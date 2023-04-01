@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<bean id="user_daoBean" class="dao.UserDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="com_daoBean" class="dao.ComDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- 체인본점 -->
+	<bean id="main_daoBean" class="dao.chain.MainDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="code_daoBean" class="dao.chain.CodeDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="fran_daoBean" class="dao.chain.FranDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="prod_daoBean" class="dao.chain.ProdDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sell_daoBean" class="dao.chain.SellDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="stat_daoBean" class="dao.chain.StatDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="pack_daoBean" class="dao.chain.PackDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="noti_daoBean" class="dao.chain.NotiDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="cate_daoBean" class="dao.chain.CateDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- 가맹점 -->
+	<bean id="smain_daoBean" class="dao.shop.SMainDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sclient_daoBean" class="dao.shop.SClientDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sprod_daoBean" class="dao.shop.SProdDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sincome_daoBean" class="dao.shop.SIncomeDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="ssell_daoBean" class="dao.shop.SSellDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="ssell2_daoBean" class="dao.shop.SSell2DAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="spack_daoBean" class="dao.shop.SPackDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sinven_daoBean" class="dao.shop.SInvenDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sstat_daoBean" class="dao.shop.SStatDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="scalen_daoBean" class="dao.shop.SCalenDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="ssahi_daoBean" class="dao.shop.SSahiDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="snoti_daoBean" class="dao.shop.SNotiDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="sscreen_daoBean" class="dao.shop.SScreenDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	<bean id="scate_daoBean" class="dao.shop.SCateDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+</beans>

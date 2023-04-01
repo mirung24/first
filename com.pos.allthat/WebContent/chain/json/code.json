@@ -1,0 +1,20 @@
+{
+	"data": [
+	{"no": "1", "code": "SC001", "codename": "업종1", "vigo": "", "use": "사용안함"},
+	{"no": "2", "code": "SC002", "codename": "업종2", "vigo": "", "use": "사용안함"},
+	{"no": "3", "code": "SC003", "codename": "업종3", "vigo": "", "use": "사용안함"},
+	{"no": "4", "code": "SC004", "codename": "업종4", "vigo": "", "use": "사용안함"},
+	{"no": "5", "code": "SC005", "codename": "업종5", "vigo": "", "use": "사용안함"},
+	{"no": "6", "code": "SC006", "codename": "업종6", "vigo": "", "use": "사용안함"},
+	{"no": "7", "code": "SC007", "codename": "업종7", "vigo": "", "use": "사용안함"},
+	{"no": "8", "code": "SC008", "codename": "업종8", "vigo": "", "use": "사용안함"},
+	{"no": "9", "code": "SC009", "codename": "업종9", "vigo": "업종9입니다.", "use": "사용"},
+	{"no": "10", "code": "SC0010", "codename": "업종10", "vigo": "", "use": "사용"},
+	{"no": "11", "code": "SC0011", "codename": "업종11", "vigo": "", "use": "사용"},
+	{"no": "12", "code": "SC0012", "codename": "업종12", "vigo": "", "use": "사용"},
+	{"no": "13", "code": "SC0013", "codename": "업종13", "vigo": "", "use": "사용"},
+	{"no": "14", "code": "SC0014", "codename": "업종14", "vigo": "", "use": "사용"},
+	{"no": "15", "code": "SC0015", "codename": "업종15", "vigo": "", "use": "사용"},
+	{"no": "16", "code": "SC0016", "codename": "업종16", "vigo": "", "use": "사용"}
+	]
+}

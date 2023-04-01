@@ -1,0 +1,51 @@
+.selcate {font-size: 1rem;}
+.selcate span {color: #61a8ff; font-weight: bold;}
+.notice {color: #fa5858; font-size: 0.8rem;}
+.fa-bars-staggered {font-size: 0.65rem !important;}
+.btn-change {background-color: #f0f0f5; color: #607cd6; padding: 0.3rem 0.5rem; font-size: 0.7rem; height: 28px; font-weight: bold;}
+.btn-change:hover {color: #fff; background-color: #f0f0f5; color: #607cd6;}
+
+/* table */
+.table-responsive {flex: 33.3333%; border: 1px solid #eee; height: 41.7rem; overflow: auto;}
+.table {font-weight: bold;}
+.table tbody tr td {display: block; }
+.table tbody th, .table tbody td {padding: 0.4rem 1rem !important; height: 51px;}
+.table thead th {position: sticky !important; top: 0; z-index: 900;}
+.table tbody td {border-bottom: none;}
+.table tbody tr td i {font-size: 1rem; display: none;}
+.table tbody td ul {display: flex; justify-content: space-between; align-items: center;}
+.table tbody td ul p {font-size: 0.7rem; color: #b1b1b1; font-weight: normal;}
+/* .table2 tbody tr, .table3 tbody tr {visibility: hidden;} */
+
+/* modal */
+.pop1, .pop2 {width: 30rem;}
+.pop-list span {min-width: 5rem;}
+.modal-wrap3 {display: flex;}
+.pop3 {background-color: #f1f5f9;padding: 1rem; border-radius: 10px; width: 40rem;}
+.pop3 .table-responsive {height: 22rem;}
+
+/* category-wrap */
+.category-wrap {border-bottom: 1px solid #eee;}
+.category {display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0; font-weight: bold;}
+.category > i {margin-left: 0.5rem; transition: all 0.5s; transform: rotate(0); font-size: 1.2rem; color: #bbb;}
+.category > i.active {transform: rotate(180deg); color: #555555;}
+.category-cont {display: none; background-color: #ffffff; padding-bottom: 1rem; overflow-y: auto;}
+
+#loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    z-index: 1002;
+    text-align: center;
+}
+#loading > #loading_bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1003;
+    transform : translate(-50%, -50%);
+}

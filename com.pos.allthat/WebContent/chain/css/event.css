@@ -1,0 +1,15 @@
+.box-wrap > div:nth-child(1) {flex: 55% 0 0;}
+.box-wrap > div:nth-child(2) {flex: 45% 0 1; display: none;}
+
+/*.table text-align */
+.box .table tr th:nth-child(2), .box .table tr td:nth-child(2) {text-align: left !important;}
+.box.tab-wrap > .tabcontent:nth-child(2) .table tr th:nth-child(4), .box.tab-wrap .tabcontent:nth-child(2) .table tr td:nth-child(4) {text-align: left !important;}
+
+/* .pop-total */
+.pop-total .pop-list span {min-width: 9rem;}
+.pop-total {display: flex; flex-wrap: wrap;}
+.pop-total li {flex: 50%;}
+.pop-total li input {text-align: right;}
+
+/* .modal-wrap2 */
+.modal-wrap2 li input {text-align: right;}

@@ -1,0 +1,6 @@
+.content {font-family: 'NanumSquareRound';  margin: auto; text-align: center; display: flex; justify-content: center; align-items: center; height: calc(100vh - 118px);}
+.error-wrap {width: 100%;padding: 1rem;}
+.fail-img {margin-top: 1.5rem;}
+.fail {font-weight: bold; font-size: 1.7rem; margin-top: 1rem; color: #ff7761;}
+.fail-cont {font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: #808080; padding: 0 1rem;}
+.fail-info {width: 30rem; margin: 1.5rem auto 0 auto; font-size: 1rem; text-align: left; padding: 1rem; color: #a1a1a1; line-height: 1.8; font-weight: lighter;}

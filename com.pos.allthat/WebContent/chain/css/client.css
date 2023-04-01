@@ -1,0 +1,7 @@
+/*.table text-align */
+.box .table tr th:nth-child(2), .box .table tr td:nth-child(2) {text-align: left !important;}
+
+/* 반응형 */
+@media screen and (max-width: 1750px) {
+	.table-media {min-width:1500px;}
+}

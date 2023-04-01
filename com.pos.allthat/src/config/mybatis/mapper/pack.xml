@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pack">
+	
+	<select id="pack_list" parameterType="vo.newvo.ProdListVO" resultType="vo.newvo.ProdListVO">
+		SELECT dd1.*
+		  from(
+		      select FLOOR((@rownum + 1 - 1)/ #{pagecnt} + 1) page,replace(FORMAT(@rownum := @rownum + 1,0),',','') as no,list.*
+		     from(
+		        SELECT productname ,productid, productcd,maker ,spec ,size,packingunit,
+		                 mxprice,
+		                 miprice,
+		                 maprice,
+		                 total,
+		                 total2,
+		                 total3,
+		                 case when total3=0 then '-' else 
+		                 case when @pv = ifnull(total3,0) then @vrank
+		                             when @pv := ifnull(total3,0) then @vrank := @vrank+1
+		                             end
+		                 end as ranking
+		        from(
+		           select pc.productname ,
+		                 pc.productid ,
+		                 pc.productcd,
+		                 pc.packingunit,
+		                 pc.maker ,
+		                 pc.spec ,
+		                 pc.`size`,
+		                 min(mm2.salesprice) as mxprice,
+		                 min(mm2.miprice) as miprice,
+		                 min(mm2.maprice) as maprice,
+		                 min(ifnull(total,0)) as total,
+		                 min(ifnull(total2,0)) as total2,
+		                 min(ifnull(total3,0)) as total3
+		           from pos_chainproductgroup pc
+		               left outer join 
+		              (
+		                    SELECT productid,productcd,sum(total) as total,sum(total2) as total2,sum(total3) as total3
+		                        from(
+		                              select pc.productid,pc.productcd,pc.packingunit,
+		                              sum(case when pp.paygubn='ACC' and pp.auth_date = date_format(now(),'%Y%m%d') then ps.total 
+		                                       when pp.paygubn='CAN' and pp.auth_date = date_format(now(),'%Y%m%d') then 0-ps.total  else 0 end) as total,
+		                              sum(case when pp.paygubn='ACC' and pp.auth_date = date_format(adddate(now(),-1),'%Y%m%d') then ps.total 
+		                                       when pp.paygubn='CAN' and pp.auth_date = date_format(adddate(now(),-1),'%Y%m%d') then 0-ps.total else 0 end) as total2,
+		                              sum(case when pp.paygubn='ACC' and pp.auth_date between  date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d') then ps.total 
+		                                       when pp.paygubn='CAN' and pp.auth_date between  date_format(adddate(now(),-30),'%Y%m%d') and date_format(now(),'%Y%m%d') then 0-ps.total else 0 end) as total3
+		                              from pos_salelist ps 
+		                                 inner join pos_payment pp    
+		                                     on ps.compcd = pp.compcd and ps.paymentcd = pp.paymentcd 
+		                                 inner join pos_compproductgroup pc 
+		                                    on ps.compcd = pc.compcd and ps.productcd = pc.productcd 
+		                                  inner join pos_compproduct pc4 
+		                                     on pc.compcd = pc4.compcd and pc.productid = pc4.productid
+		                                 inner join pos_company pc2 
+		                                    on ps.compcd = pc2.compcd
+		                                 inner join pos_chaincompany pc3 
+		                                    on pc2.compcd = pc3.compcd 
+		                              where 1=1 and pc3.chaincode =#{chaincode}
+		                                    and ps.salesday between #{searchDate1} and #{searchDate2}
+		                              group by pc.productid,pc.productcd,pc.packingunit
+		                        ) sal      
+		                        group by productid,productcd
+		              )mm on pc.productid = mm.productid and pc.productcd = mm.productcd
+		   left outer join 
+		              (
+		       select barcode,SUBSTRING_INDEX(group_concat(salesprice order by pcnt DESC), ',', 1) AS salesprice,min(salesprice) as miprice,max(salesprice) as maprice
+		                 from (
+		                    select barcode,ifnull(salesprice,0) as salesprice,count(*) as pcnt
+		                    from pos_compproductgroup
+		                    where salesprice>0 and salesdate >= date_format(date_sub(now(), interval 1 month),'%Y%m%d')
+		                    GROUP BY barcode,ifnull(salesprice,0)
+		                 )pdate
+		                 group by barcode
+		
+		    )mm2
+		                 on pc.barcode = mm2.barcode
+		           where pc.chaincode =#{chaincode}
+		      group by pc.productname ,
+		                 pc.productid ,
+		                 pc.productcd
+		              order by total3 desc
+		        ) dd ,(SELECT @vrank := 0, @pv := null) as r
+		        where 1=1
+		          	<if test="search1 == 'all'">
+		              and concat(productname,productid, maker) like concat('%',#{searchInput},'%')
+		          	</if>
+		          	<if test="search1 == 'productname'">
+		              and dd.productname like concat('%',#{searchInput},'%')
+		            </if>
+		            <if test="search1 == 'productid'">
+		              and dd.productid like concat('%',#{searchInput},'%')
+		            </if>
+		            <if test="search1 == 'maker'">
+		              and dd.maker like concat('%',#{searchInput},'%')
+		          </if>
+		     )list, (select @rownum := 0) r
+		  ) dd1
+		  where page=#{pageno}
+	</select>
+	
+	<select id="count" parameterType="vo.newvo.ProdListVO" resultType="int">
+		select count(*)
+		 from(
+		    select pc.productname ,
+		           pc.productid ,
+		           pc.productcd,
+		           pc.packingunit,
+		           pc.maker ,
+		           pc.spec ,
+		           pc.`size`
+		    from pos_chainproductgroup pc
+		    where chaincode=#{chaincode}
+		 ) dd
+		 where 1=1 
+		      <if test="search1 == 'all'">
+		       and concat(productname,productid, maker) like concat('%',#{searchInput},'%')
+		      </if>
+		      <if test="search1 == 'productname'">
+		        and dd.productname like concat('%',#{searchInput},'%')
+		      </if>
+		      <if test="search1 == 'productid'">
+		        and dd.productid like concat('%',#{searchInput},'%')
+		      </if>
+		      <if test="search1 == 'maker'">
+		        and dd.maker like concat('%',#{searchInput},'%')
+		    </if>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

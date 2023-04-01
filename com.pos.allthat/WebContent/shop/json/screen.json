@@ -1,7 +1,0 @@
-{
-	"data": [
-	{"no": "1", "groupname": "새해맞이", "start": "22-12-29", "finish": "23-01-05", "first": "적용", "templete": "눈송이1", "preview": ""},
-	{"no": "2", "groupname": "설날", "start": "23-12-16", "finish": "23-12-24", "first": "적용", "templete": "눈송이2", "preview": ""},
-	{"no": "3", "groupname": "기본", "start": "22-12-29", "finish": "23-12-31", "first": "미적용", "templete": "-", "preview": ""}
-	]
-}

@@ -1,7 +1,0 @@
-.writer, .title{border-bottom: 1px solid #ddd;}
-
-.box {background-color: #f3f3f9; box-shadow: none; padding: 0; padding-top: 1rem;}
-.box > div:nth-child(1) {flex: 55% 0 0; padding: 1rem; background-color: #fff; box-shadow: 0 1px 2px rgb(56 65 74 / 15%); border-radius: 0.25rem;}
-.box > div:nth-child(2) {flex: 45% 0 1; padding: 1rem; background-color: #fff; box-shadow: 0 1px 2px rgb(56 65 74 / 15%); border-radius: 0.25rem;}
-
-#removeBtn {background-color: #e24842 !important}
